@@ -34,7 +34,7 @@ Completa `.env` con los valores de `.env.example`. El `.env` no se sube a GitHub
 - La disponibilidad se muestra con el campo `estado` (`disponible`, `pocas_unidades`, `agotado`), nunca con el stock exacto.
 - El `id` de la variante es el que se envía al comprar.
 - Toda página que pide datos muestra un indicador de carga y maneja el error (el backend en Render free tarda en despertar).
-- Colores y tipografías se definen una sola vez en `tailwind.config`.
+- Colores y tipografías se definen una sola vez en el bloque `@theme` de `src/index.css`.
 - Archivos compartidos (`App.jsx`, layout): solo agregar líneas propias, con cambios mínimos. `git pull` de `main` seguido y PR pequeños.
 - Cambios al stack o a estas reglas: avisar al grupo antes.
 

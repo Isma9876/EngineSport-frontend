@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/*
+ * Colores y tipografías: se definen UNA sola vez aquí (Tailwind v4 usa @theme
+ * en lugar de tailwind.config). Valores provisionales.
+ */
+@theme {
+  --color-primario: #dc2626;
+  --color-secundario: #1e293b;
+  --color-fondo: #f8fafc;
+  --color-texto: #0f172a;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-titulo: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  @apply bg-fondo text-texto font-sans;
+}
