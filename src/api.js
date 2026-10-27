@@ -39,7 +39,7 @@ async function leerError(res) {
 function manejarSesion(ruta, error) {
   const vencida =
     (error.status === 401 && ruta !== RUTA_LOGIN) ||
-    (error.status === 403 && error.code === 'CUENTA_DESACTIVADA')
+    (error.status === 403 && error.code === 'CUENTA_DESACTIVADA' && ruta !== RUTA_LOGIN)
   if (vencida && onSessionExpired) onSessionExpired(error)
 }
 
