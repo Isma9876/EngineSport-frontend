@@ -6,6 +6,7 @@ import ImagenProducto from '../../components/ImagenProducto.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import useApi from '../../hooks/useApi.js'
 import { formatoPrecio } from '../../utils/formato.js'
+import { agregarAlCarrito } from '../../utils/carrito.js'
 
 const boton = 'rounded border px-3 py-2 text-sm transition disabled:cursor-not-allowed disabled:opacity-40'
 const opcion = (activa) =>
@@ -15,7 +16,7 @@ function unicos(valores) {
   return [...new Set(valores.filter((v) => v != null))]
 }
 
-export default function ProductoDetalle({ onAgregar }) {
+export default function ProductoDetalle() {
   const { id } = useParams()
   const { state } = useLocation()
   const navigate = useNavigate()
@@ -34,6 +35,7 @@ export default function ProductoDetalle({ onAgregar }) {
   // Texto mientras se escribe; se normaliza al salir del campo.
   const [cantidad, setCantidad] = useState('1')
   const [aviso, setAviso] = useState('')
+  const [agregando, setAgregando] = useState(false)
 
   // Vuelve al listado con los mismos filtros si se llegó desde él.
   const desde = typeof state?.desde === 'string' && state.desde.startsWith('/productos') ? state.desde : '/productos'
@@ -106,15 +108,23 @@ export default function ProductoDetalle({ onAgregar }) {
   const estado = variante ? variante.estado : producto.estado
   const puedeAgregar = Boolean(variante) && !agotada(variante)
 
-  const agregar = () => {
+    const agregar = async () => {
     // Primero la selección: sin variante válida no se hace nada, haya sesión o no.
-    if (!puedeAgregar) return
+    if (!puedeAgregar || agregando) return
     if (usuario?.tipo !== 'cliente') {
       navigate('/login')
       return
     }
-    onAgregar?.({ idVariante: variante.id, cantidad: Math.max(1, parseInt(cantidad, 10) || 1) })
-    setAviso('Próximamente')
+    setAgregando(true)
+    setAviso('')
+    try {
+      await agregarAlCarrito(variante.id, Math.max(1, parseInt(cantidad, 10) || 1))
+      setAviso('Agregado al carrito.')
+    } catch (e) {
+      setAviso(e.message)
+    } finally {
+      setAgregando(false)
+    }
   }
 
   const cambiarCantidad = (valor) => {
@@ -229,7 +239,7 @@ export default function ProductoDetalle({ onAgregar }) {
             <button
               type="button"
               onClick={agregar}
-              disabled={!puedeAgregar}
+              disabled={!puedeAgregar || agregando}
               className="rounded bg-primario px-5 py-2 font-semibold text-secundario hover:bg-primario-oscuro hover:text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-primario disabled:hover:text-secundario"
             >
               Agregar al carrito
