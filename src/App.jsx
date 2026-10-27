@@ -10,6 +10,7 @@ import Carrito from './pages/ventas/Carrito.jsx'
 import Checkout from './pages/ventas/Checkout.jsx'
 import MisPedidos from './pages/ventas/MisPedidos.jsx'
 import Admin from './pages/admin/Admin.jsx'
+import Confirmacion from './pages/ventas/Confirmacion.jsx'
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/carrito" element={<Carrito />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/mis-pedidos" element={<MisPedidos />} />
+          <Route path="/confirmacion/:id" element={<Confirmacion />} />
         </Route>
 
         <Route element={<RutaProtegida tipo="empleado" />}>
