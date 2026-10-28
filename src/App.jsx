@@ -15,6 +15,7 @@ import Confirmacion from './pages/ventas/Confirmacion.jsx'
 import PedidosAdmin from './pages/admin/PedidosAdmin.jsx'
 import ReportesAdmin from './pages/admin/ReportesAdmin.jsx'
 import CuponesAdmin from './pages/admin/CuponesAdmin.jsx'
+import CategoriasAdmin from './pages/admin/CategoriasAdmin.jsx'
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="/admin/pedidos" element={<PedidosAdmin />} />
             <Route path="/admin/reportes" element={<ReportesAdmin />} />
             <Route path="/admin/cupones" element={<CuponesAdmin />} />
+            <Route path="/admin/categorias" element={<CategoriasAdmin />} />
           </Route>
         </Route>
       </Route>
