@@ -16,6 +16,7 @@ import PedidosAdmin from './pages/admin/PedidosAdmin.jsx'
 import CuponesAdmin from './pages/admin/CuponesAdmin.jsx'
 import CategoriasAdmin from './pages/admin/CategoriasAdmin.jsx'
 import ProveedoresAdmin from './pages/admin/ProveedoresAdmin.jsx'
+import ProductosAdmin from './pages/admin/ProductosAdmin.jsx'
 import { lazy, Suspense } from 'react'
 import Cargando from './components/Cargando.jsx'
 
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="/admin/cupones" element={<CuponesAdmin />} />
             <Route path="/admin/categorias" element={<CategoriasAdmin />} />
             <Route path="/admin/proveedores" element={<ProveedoresAdmin />} />
+            <Route path="/admin/productos" element={<ProductosAdmin />} />
             <Route
               path="/admin/reportes" element={<Suspense fallback={<Cargando texto="Cargando reportes..." />}>
                   <ReportesAdmin />
