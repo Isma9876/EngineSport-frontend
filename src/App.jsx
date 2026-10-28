@@ -17,6 +17,7 @@ import ReportesAdmin from './pages/admin/ReportesAdmin.jsx'
 import CuponesAdmin from './pages/admin/CuponesAdmin.jsx'
 import CategoriasAdmin from './pages/admin/CategoriasAdmin.jsx'
 import ProveedoresAdmin from './pages/admin/ProveedoresAdmin.jsx'
+import ProductosAdmin from './pages/admin/ProductosAdmin.jsx'
 
 export default function App() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
             <Route path="/admin/cupones" element={<CuponesAdmin />} />
             <Route path="/admin/categorias" element={<CategoriasAdmin />} />
             <Route path="/admin/proveedores" element={<ProveedoresAdmin />} />
+            <Route path="/admin/productos" element={<ProductosAdmin />} />
           </Route>
         </Route>
       </Route>
