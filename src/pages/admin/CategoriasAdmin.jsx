@@ -32,8 +32,25 @@ export default function CategoriasAdmin() {
   const nombrePorId = new Map(categorias.map((c) => [c.id, c.nombre]))
   const cambiar = (k) => (e) => setF({ ...f, [k]: e.target.value })
 
+  // La propia categoría y todos sus descendientes no pueden ser su padre (con protección contra ciclos).
+  const excluidas = new Set()
+  if (editando !== null) {
+    excluidas.add(editando)
+    const pendientes = [editando]
+    while (pendientes.length > 0) {
+      const actual = pendientes.pop()
+      for (const c of categorias) {
+        if (c.id_categoria_padre === actual && !excluidas.has(c.id)) {
+          excluidas.add(c.id)
+          pendientes.push(c.id)
+        }
+      }
+    }
+  }
+
   function abrirNueva() {
     if (abierto && editando === null) return setAbierto(false)
+    setMensaje(null)
     setEditando(null)
     setF(VACIO)
     setAbierto(true)
@@ -128,13 +145,13 @@ export default function CategoriasAdmin() {
           </h2>
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Etiqueta texto="Nombre">
-              <input value={f.nombre} onChange={cambiar('nombre')} className={`${campo} mt-1`} maxLength={100} />
+              <input value={f.nombre} onChange={cambiar('nombre')} className={`${campo} mt-1`} maxLength={255} />
             </Etiqueta>
             <Etiqueta texto="Categoría padre" ayuda="Opcional. Vacío = categoría principal.">
               <select value={f.padre} onChange={cambiar('padre')} className={`${campo} mt-1`}>
                 <option value="">Sin padre</option>
                 {categorias
-                  .filter((c) => c.id !== editando)
+                  .filter((c) => !excluidas.has(c.id))
                   .map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.nombre}
@@ -144,7 +161,7 @@ export default function CategoriasAdmin() {
             </Etiqueta>
             <div className="sm:col-span-2">
               <Etiqueta texto="Descripción" ayuda="Opcional.">
-                <input value={f.descripcion} onChange={cambiar('descripcion')} className={`${campo} mt-1`} maxLength={200} />
+                <input value={f.descripcion} onChange={cambiar('descripcion')} className={`${campo} mt-1`} />
               </Etiqueta>
             </div>
           </div>
