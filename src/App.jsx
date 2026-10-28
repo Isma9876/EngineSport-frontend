@@ -13,9 +13,11 @@ import Admin from './pages/admin/Admin.jsx'
 import AdminLayout from './pages/admin/AdminLayout.jsx'
 import Confirmacion from './pages/ventas/Confirmacion.jsx'
 import PedidosAdmin from './pages/admin/PedidosAdmin.jsx'
-import ReportesAdmin from './pages/admin/ReportesAdmin.jsx'
 import CuponesAdmin from './pages/admin/CuponesAdmin.jsx'
 import CategoriasAdmin from './pages/admin/CategoriasAdmin.jsx'
+import { lazy, Suspense } from 'react'
+import Cargando from './components/Cargando.jsx'
+const ReportesAdmin = lazy(() => import('./pages/admin/ReportesAdmin.jsx'))
 
 export default function App() {
   return (
@@ -39,9 +41,13 @@ export default function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Admin />} />
             <Route path="/admin/pedidos" element={<PedidosAdmin />} />
-            <Route path="/admin/reportes" element={<ReportesAdmin />} />
             <Route path="/admin/cupones" element={<CuponesAdmin />} />
             <Route path="/admin/categorias" element={<CategoriasAdmin />} />
+            <Route path="/admin/reportes" element={<Suspense fallback={<Cargando texto="Cargando reportes..." />}>
+      <ReportesAdmin />
+    </Suspense>
+  }
+/>
           </Route>
         </Route>
       </Route>
