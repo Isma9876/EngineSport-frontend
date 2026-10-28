@@ -4,21 +4,33 @@ import api, { setOnSessionExpired } from '../api.js'
 
 const AuthContext = createContext(null)
 
+const SIN_SESION = { token: null, usuario: null, cliente: null }
+
 function leerSesion() {
   try {
     const token = localStorage.getItem('token')
     const usuario = JSON.parse(localStorage.getItem('usuario'))
-    if (token && usuario) return { token, usuario }
+    const cliente = JSON.parse(localStorage.getItem('cliente'))
+    if (token && usuario) {
+      // Una sesión de cliente guardada antes de que existiera 'cliente' no sirve para
+      // el checkout (falta su id): se descarta para que vuelva a iniciar sesión.
+      if (usuario.tipo === 'cliente' && !cliente?.id) {
+        borrarSesion()
+        return SIN_SESION
+      }
+      return { token, usuario, cliente: cliente ?? null }
+    }
   } catch {
     // datos corruptos o localStorage no disponible
   }
-  return { token: null, usuario: null }
+  return SIN_SESION
 }
 
 function borrarSesion() {
   try {
     localStorage.removeItem('token')
     localStorage.removeItem('usuario')
+    localStorage.removeItem('cliente')
   } catch {
     // ignorar
   }
@@ -37,7 +49,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     setOnSessionExpired((error) => {
       borrarSesion()
-      setSesion({ token: null, usuario: null })
+      setSesion(SIN_SESION)
       setAviso(
         error.code === 'CUENTA_DESACTIVADA'
           ? 'Esta cuenta está desactivada.'
@@ -49,9 +61,18 @@ export function AuthProvider({ children }) {
   }, [navigate])
 
   const guardarSesion = useCallback((datos) => {
+    // El login y el registro devuelven 'cliente' para clientes; los empleados no lo traen.
+    const cliente = datos.cliente
+      ? { id: datos.cliente.id, nombre: datos.cliente.nombre, apellido: datos.cliente.apellido }
+      : null
     localStorage.setItem('token', datos.token)
     localStorage.setItem('usuario', JSON.stringify(datos.usuario))
-    setSesion({ token: datos.token, usuario: datos.usuario })
+    if (cliente) {
+      localStorage.setItem('cliente', JSON.stringify(cliente))
+    } else {
+      localStorage.removeItem('cliente')
+    }
+    setSesion({ token: datos.token, usuario: datos.usuario, cliente })
     setAviso('')
   }, [])
 
@@ -75,7 +96,7 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(() => {
     borrarSesion()
-    setSesion({ token: null, usuario: null })
+    setSesion(SIN_SESION)
     setAviso('')
     navigate('/login', { replace: true })
   }, [navigate])
