@@ -78,9 +78,9 @@ function Globo({ active, payload, children }) {
     </div>
   )
 }
+const anioActual = new Date().getFullYear()
 
 function VentasMensuales() {
-  const anioActual = new Date().getFullYear()
   const [anio, setAnio] = useState(anioActual)
   const { datos, error, cargando, recargar } = useApi(`/api/reportes/ventas-mensuales?anio=${anio}`)
 
