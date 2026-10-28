@@ -16,19 +16,10 @@ const titulo = 'font-titulo text-2xl font-extrabold uppercase'
 const clavePublica = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
 const stripePromise = clavePublica ? loadStripe(clavePublica) : null
 
-// TEMPORAL: se quita cuando el login devuelva el cliente.
-function idClienteLocal() {
-  try {
-    return JSON.parse(localStorage.getItem('cliente'))?.id ?? null
-  } catch {
-    return null
-  }
-}
-
 export default function Checkout() {
   const { state } = useLocation()
   const { cliente } = useAuth()
-  const idCliente = cliente?.id ?? idClienteLocal()
+  const idCliente = cliente?.id ?? null
   const cupon = typeof state?.cupon === 'string' ? state.cupon : null
 
   const [elegida, setElegida] = useState(null)
