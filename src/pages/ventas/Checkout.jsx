@@ -4,14 +4,12 @@ import api from '../../api.js'
 import useApi from '../../hooks/useApi.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 import Cargando from '../../components/Cargando.jsx'
+import SelectorDireccion from '../../components/SelectorDireccion.jsx'
 import { formatoPrecio } from '../../utils/formato.js'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import PagoStripe from './PagoStripe.jsx'
 
-const idDe = (d) => d.id ?? d.id_direccion
-const VACIA = { direccion: '', ciudad: '', estado: '', codigo_postal: '', pais: 'Guatemala' }
-const campo = 'w-full rounded border border-borde bg-fondo px-2 py-1'
 const titulo = 'font-titulo text-2xl font-extrabold uppercase'
 const clavePublica = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
 const stripePromise = clavePublica ? loadStripe(clavePublica) : null
@@ -23,10 +21,6 @@ export default function Checkout() {
   const cupon = typeof state?.cupon === 'string' ? state.cupon : null
 
   const [elegida, setElegida] = useState(null)
-  const [mostrarForm, setMostrarForm] = useState(false)
-  const [form, setForm] = useState(VACIA)
-  const [guardando, setGuardando] = useState(false)
-  const [errorForm, setErrorForm] = useState('')
   const [pedidoId, setPedidoId] = useState(null)
   const [clientSecret, setClientSecret] = useState(null)
   const [totalPedido, setTotalPedido] = useState(null)
@@ -40,17 +34,9 @@ export default function Checkout() {
     cargando: cargandoCarrito,
     recargar: recargarCarrito,
   } = useApi(rutaCarrito)
-  const {
-    datos: direcciones,
-    error: errDir,
-    cargando: cargandoDir,
-    recargar: recargarDir,
-  } = useApi(idCliente ? `/api/direcciones/cliente/${idCliente}` : null)
 
-  const lista = Array.isArray(direcciones) ? direcciones : []
-  const sugerida = lista.find((d) => d.es_predeterminada) ?? lista[0]
-  const elegidaId = elegida ?? (sugerida ? idDe(sugerida) : null)
-  const verForm = mostrarForm || (lista.length === 0 && !cargandoDir)
+  const elegidaId = elegida
+
   async function iniciarPago() {
     setErrorPago('')
     if (!elegidaId) {
@@ -93,36 +79,6 @@ export default function Checkout() {
       setProcesando(false)
     }
   }
-  const cambiar = (k) => (e) => setForm({ ...form, [k]: e.target.value })
-
-  async function guardarDireccion(e) {
-    e.preventDefault()
-    setErrorForm('')
-    if (!form.direccion.trim() || !form.ciudad.trim() || !form.estado.trim()) {
-      setErrorForm('Completa dirección, ciudad y departamento.')
-      return
-    }
-    setGuardando(true)
-    try {
-      const nueva = await api.post('/api/direcciones', {
-        id_cliente: idCliente,
-        direccion: form.direccion.trim(),
-        ciudad: form.ciudad.trim(),
-        estado: form.estado.trim(),
-        codigo_postal: form.codigo_postal.trim() || null,
-        pais: form.pais.trim() || 'Guatemala',
-        es_predeterminada: lista.length === 0,
-      })
-      setElegida(idDe(nueva))
-      setForm(VACIA)
-      setMostrarForm(false)
-      recargarDir()
-    } catch (err) {
-      setErrorForm(err.message)
-    } finally {
-      setGuardando(false)
-    }
-  }
 
   if (!idCliente) {
     return (
@@ -132,7 +88,7 @@ export default function Checkout() {
       </section>
     )
   }
-  if (cargandoCarrito || (cargandoDir && !direcciones)) return <Cargando texto="Preparando tu compra..." />
+  if (cargandoCarrito) return <Cargando texto="Preparando tu compra..." />
 
   if (errCarrito) {
     return (
@@ -179,90 +135,12 @@ export default function Checkout() {
         <div className="space-y-6 lg:col-span-2">
           <div>
             <h2 className="font-titulo text-xl font-bold uppercase">Dirección de envío</h2>
-
-            {errDir && (
-              <p role="alert" className="mt-2 text-sm text-primario-oscuro">
-                {errDir.message}{' '}
-                <button onClick={recargarDir} className="underline">
-                  Reintentar
-                </button>
-              </p>
-            )}
-
-            {lista.length > 0 && (
-              <ul className="mt-3 space-y-2">
-                {lista.map((d) => (
-                  <li key={idDe(d)}>
-                    <label className="flex cursor-pointer gap-3 rounded border border-borde p-3 has-[:checked]:border-primario">
-                      <input
-                        type="radio" disabled={Boolean(pedidoId)}
-                        name="direccion"
-                        checked={elegidaId === idDe(d)}
-                        onChange={() => setElegida(idDe(d))}
-                      />
-                      <span className="text-sm">
-                        <span className="font-semibold">{d.direccion}</span>
-                        <br />
-                        {[d.ciudad, d.estado, d.pais].filter(Boolean).join(', ')}
-                        {d.es_predeterminada && (
-                          <span className="ml-2 text-xs text-texto-suave">(predeterminada)</span>
-                        )}
-                      </span>
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            {lista.length > 0 && !verForm && (
-              <button onClick={() => setMostrarForm(true)} className="mt-3 text-sm underline">
-                Agregar otra dirección
-              </button>
-            )}
-
-            {verForm && (
-              <form onSubmit={guardarDireccion} className="mt-3 grid gap-3 rounded bg-superficie p-4 sm:grid-cols-2">
-                <label className="text-sm sm:col-span-2">
-                  Dirección
-                  <input value={form.direccion} onChange={cambiar('direccion')} className={campo} />
-                </label>
-                <label className="text-sm">
-                  Ciudad
-                  <input value={form.ciudad} onChange={cambiar('ciudad')} className={campo} />
-                </label>
-                <label className="text-sm">
-                  Departamento
-                  <input value={form.estado} onChange={cambiar('estado')} className={campo} />
-                </label>
-                <label className="text-sm">
-                  Código postal (opcional)
-                  <input value={form.codigo_postal} onChange={cambiar('codigo_postal')} className={campo} />
-                </label>
-                <label className="text-sm">
-                  País
-                  <input value={form.pais} onChange={cambiar('pais')} className={campo} />
-                </label>
-                {errorForm && (
-                  <p role="alert" className="text-sm text-primario-oscuro sm:col-span-2">
-                    {errorForm}
-                  </p>
-                )}
-                <div className="flex gap-3 sm:col-span-2">
-                  <button
-                    type="submit"
-                    disabled={guardando}
-                    className="rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
-                  >
-                    {guardando ? 'Guardando...' : 'Guardar dirección'}
-                  </button>
-                  {lista.length > 0 && (
-                    <button type="button" onClick={() => setMostrarForm(false)} className="text-sm underline">
-                      Cancelar
-                    </button>
-                  )}
-                </div>
-              </form>
-            )}
+            <SelectorDireccion
+              idCliente={idCliente}
+              valor={elegida}
+              onChange={setElegida}
+              deshabilitado={Boolean(pedidoId)}
+            />
           </div>
 
           <div>
@@ -296,7 +174,7 @@ export default function Checkout() {
             )}
           </div>
         </div>
-        
+
         <aside className="h-fit rounded bg-superficie p-4">
           <h2 className="font-titulo text-xl font-bold uppercase">Tu pedido</h2>
           <ul className="mt-3 space-y-1 text-sm">
