@@ -12,6 +12,7 @@ import MisPedidos from './pages/ventas/MisPedidos.jsx'
 import Admin from './pages/admin/Admin.jsx'
 import Confirmacion from './pages/ventas/Confirmacion.jsx'
 import PedidosAdmin from './pages/admin/PedidosAdmin.jsx'
+import ReportesAdmin from './pages/admin/ReportesAdmin.jsx'
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/registro" element={<Registro />} />
         <Route path="/productos" element={<Productos />} />
         <Route path="/productos/:id" element={<ProductoDetalle />} />
+        <Route path="*" element={<h2>Página no encontrada</h2>} />
 
         <Route element={<RutaProtegida tipo="cliente" />}>
           <Route path="/carrito" element={<Carrito />} />
@@ -33,6 +35,7 @@ export default function App() {
         <Route element={<RutaProtegida tipo="empleado" />}>
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/pedidos" element={<PedidosAdmin />} />
+          <Route path="/admin/reportes" element={<ReportesAdmin />} />
         </Route>
       </Route>
     </Routes>
