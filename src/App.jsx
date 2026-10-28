@@ -10,6 +10,7 @@ import Carrito from './pages/ventas/Carrito.jsx'
 import Checkout from './pages/ventas/Checkout.jsx'
 import MisPedidos from './pages/ventas/MisPedidos.jsx'
 import Admin from './pages/admin/Admin.jsx'
+import AdminLayout from './pages/admin/AdminLayout.jsx'
 import Confirmacion from './pages/ventas/Confirmacion.jsx'
 import PedidosAdmin from './pages/admin/PedidosAdmin.jsx'
 import ReportesAdmin from './pages/admin/ReportesAdmin.jsx'
@@ -34,10 +35,12 @@ export default function App() {
         </Route>
 
         <Route element={<RutaProtegida tipo="empleado" />}>
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/pedidos" element={<PedidosAdmin />} />
-          <Route path="/admin/reportes" element={<ReportesAdmin />} />
-          <Route path="/admin/cupones" element={<CuponesAdmin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Admin />} />
+            <Route path="/admin/pedidos" element={<PedidosAdmin />} />
+            <Route path="/admin/reportes" element={<ReportesAdmin />} />
+            <Route path="/admin/cupones" element={<CuponesAdmin />} />
+          </Route>
         </Route>
       </Route>
     </Routes>
