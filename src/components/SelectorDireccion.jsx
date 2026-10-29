@@ -50,7 +50,7 @@ export default function SelectorDireccion({ idCliente, valor, onChange, deshabil
   return (
     <div>
       {error && (
-        <p role="alert" className="mt-2 text-sm text-primario-oscuro">
+        <p role="alert" className="mt-2 text-sm text-estado-error">
           {error.message}{' '}
           <button onClick={recargar} className="underline">
             Reintentar
@@ -69,6 +69,8 @@ export default function SelectorDireccion({ idCliente, valor, onChange, deshabil
                   disabled={deshabilitado}
                   checked={elegidaId === idDe(d)}
                   onChange={() => onChange(idDe(d))}
+                  className="mt-1 h-4 w-4 shrink-0"
+                  style={{ accentColor: '#16784f' }}
                 />
                 <span className="text-sm">
                   <span className="font-semibold">{d.direccion}</span>

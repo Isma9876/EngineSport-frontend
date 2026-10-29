@@ -21,7 +21,7 @@ const idDe = (d) => d.id ?? d.id_direccion
 
 function ErrorReintento({ mensaje, onReintentar }) {
   return (
-    <p role="alert" className="mt-3 text-sm text-primario-oscuro">
+    <p role="alert" className="mt-3 text-sm text-estado-error">
       {mensaje}{' '}
       <button onClick={onReintentar} className="underline">
         Reintentar
@@ -89,7 +89,7 @@ function FormDatos({ cliente }) {
         <input name="telefono" type="tel" value={form.telefono} onChange={cambiar} autoComplete="tel" className={campo} />
       </label>
       {error && (
-        <p role="alert" className="text-sm text-primario-oscuro sm:col-span-2">
+        <p role="alert" className="text-sm text-estado-error sm:col-span-2">
           {error}
         </p>
       )}
@@ -166,7 +166,7 @@ function Direcciones({ idCliente }) {
       {cargando && <Cargando texto="Cargando direcciones..." />}
       {error && <ErrorReintento mensaje={error.message} onReintentar={recargar} />}
       {errorAccion && (
-        <p role="alert" className="mt-3 text-sm text-primario-oscuro">
+        <p role="alert" className="mt-3 text-sm text-estado-error">
           {errorAccion}
         </p>
       )}
@@ -302,7 +302,7 @@ function DesactivarCuenta() {
             />
           </label>
           {error && (
-            <p role="alert" className="text-sm text-primario-oscuro">
+            <p role="alert" className="text-sm text-estado-error">
               {error}
             </p>
           )}

@@ -68,7 +68,7 @@ export default function FormularioDireccion({
         <input value={form.pais} onChange={cambiar('pais')} className={campo} />
       </label>
       {error && (
-        <p role="alert" className="text-sm text-primario-oscuro sm:col-span-2">
+        <p role="alert" className="text-sm text-estado-error sm:col-span-2">
           {error}
         </p>
       )}

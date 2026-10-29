@@ -33,7 +33,7 @@ export default function PagoStripe({ idPedido, total, onCancelar, bloqueado }) {
     <form onSubmit={pagar} className="space-y-4">
       <PaymentElement />
       {error && (
-        <p role="alert" className="text-sm text-primario-oscuro">
+        <p role="alert" className="text-sm text-estado-error">
           {error}
         </p>
       )}

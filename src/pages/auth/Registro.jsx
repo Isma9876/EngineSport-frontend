@@ -64,7 +64,7 @@ export default function Registro() {
             />
           </label>
         ))}
-        {error && <p className="text-sm text-primario-oscuro" role="alert">{error}</p>}
+        {error && <p className="text-sm text-estado-error" role="alert">{error}</p>}
         <button
           type="submit"
           disabled={enviando}

@@ -17,6 +17,7 @@
   --color-estado-disponible: #1b6e3c;
   --color-estado-pocas: #8a5a00;
   --color-estado-agotado: #55695f;
+  --color-estado-error: #b42318;
 
   --font-sans: "Inter", system-ui, sans-serif;
   --font-titulo: "Barlow Condensed", "Arial Narrow", sans-serif;

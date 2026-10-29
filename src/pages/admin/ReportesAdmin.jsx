@@ -13,6 +13,8 @@ import {
 import useApi from '../../hooks/useApi.js'
 import Cargando from '../../components/Cargando.jsx'
 import { formatoPrecio } from '../../utils/formato.js'
+import { descargarCSV } from '../../utils/csv.js'
+import { useSearchParams } from 'react-router-dom'
 
 const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 const MESES_LARGO = [
@@ -20,14 +22,19 @@ const MESES_LARGO = [
   'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
 ]
 
-// Paleta: naranja de marca como protagonista; el resto acompaña
-const NARANJA = '#F4511E'
-const NARANJA_SUAVE = '#FBC2AC'
-const GRIS_TEXTO = '#6B7280'
-const GRIS_LINEA = '#E5E7EB'
-const PALETA = ['#F4511E', '#1F2937', '#F59E0B', '#0EA5E9', '#16A34A', '#8B5CF6', '#EC4899', '#64748B', '#14B8A6', '#EAB308']
+// Colores: todos salen de las variables del @theme de index.css
+const NARANJA = 'var(--color-primario)'
+const NARANJA_SUAVE = 'color-mix(in srgb, var(--color-primario) 35%, white)'
+const OSCURO = 'var(--color-secundario)'
+const GRIS_TEXTO = 'var(--color-texto-suave)'
+const GRIS_LINEA = 'var(--color-borde)'
+const VERDE = 'var(--color-estado-disponible)'
+const AMBAR = 'var(--color-estado-pocas)'
+const ROJO = 'var(--color-primario-oscuro)'
+const PALETA = [NARANJA, OSCURO, AMBAR, VERDE, ROJO, GRIS_TEXTO]
 
 const campo = 'rounded-lg border border-borde bg-white px-3 py-1.5 text-sm'
+const POR_PAGINA = 25
 
 function Tarjeta({ titulo, descripcion, accion, children }) {
   return (
@@ -44,7 +51,7 @@ function Tarjeta({ titulo, descripcion, accion, children }) {
   )
 }
 
-function Indicador({ etiqueta, valor, nota, color = '#1F2937' }) {
+function Indicador({ etiqueta, valor, nota, color = OSCURO }) {
   return (
     <div className="rounded-lg border border-borde bg-superficie p-4" style={{ borderLeft: `4px solid ${color}` }}>
       <p className="text-sm text-texto-suave">{etiqueta}</p>
@@ -78,6 +85,15 @@ function Globo({ active, payload, children }) {
     </div>
   )
 }
+
+function BotonCSV({ onClick, disabled }) {
+  return (
+    <button onClick={onClick} disabled={disabled} className={`${campo} font-semibold hover:bg-superficie disabled:opacity-40`}>
+      Descargar CSV
+    </button>
+  )
+}
+
 const anioActual = new Date().getFullYear()
 
 function VentasMensuales() {
@@ -95,21 +111,32 @@ function VentasMensuales() {
   const mejor = serie.reduce((a, b) => (b.total > a.total ? b : a), serie[0])
   const ticket = pedidosAnio > 0 ? totalAnio / pedidosAnio : 0
 
+  function exportar() {
+    descargarCSV(`ventas-mensuales-${anio}.csv`, [
+      { titulo: 'Mes', valor: (m) => MESES_LARGO[m.indice] },
+      { titulo: 'Pedidos', valor: (m) => m.pedidos },
+      { titulo: 'Total vendido', valor: (m) => m.total.toFixed(2) },
+    ], serie)
+  }
+
   return (
     <Tarjeta
       titulo="Ventas mensuales"
       descripcion="Solo cuentan los pedidos pagados y enviados."
       accion={
-        <label className="text-sm">
-          Año{' '}
-          <select value={anio} onChange={(e) => setAnio(Number(e.target.value))} className={campo}>
-            {[0, 1, 2, 3].map((n) => (
-              <option key={n} value={anioActual - n}>
-                {anioActual - n}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="text-sm">
+            Año{' '}
+            <select value={anio} onChange={(e) => setAnio(Number(e.target.value))} className={campo}>
+              {[0, 1, 2, 3].map((n) => (
+                <option key={n} value={anioActual - n}>
+                  {anioActual - n}
+                </option>
+              ))}
+            </select>
+          </label>
+          <BotonCSV onClick={exportar} disabled={!datos} />
+        </div>
       }
     >
       <Estado cargando={cargando} error={error} recargar={recargar} datos={datos} />
@@ -118,13 +145,13 @@ function VentasMensuales() {
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Indicador etiqueta="Total vendido" valor={formatoPrecio(totalAnio)} color={NARANJA} />
-            <Indicador etiqueta="Pedidos" valor={pedidosAnio} color="#1F2937" />
-            <Indicador etiqueta="Ticket promedio" valor={formatoPrecio(ticket)} color="#0EA5E9" />
+            <Indicador etiqueta="Pedidos" valor={pedidosAnio} color={OSCURO} />
+            <Indicador etiqueta="Ticket promedio" valor={formatoPrecio(ticket)} color={AMBAR} />
             <Indicador
               etiqueta="Mejor mes"
               valor={mejor.total > 0 ? MESES_LARGO[mejor.indice] : '-'}
               nota={mejor.total > 0 ? formatoPrecio(mejor.total) : 'Sin ventas'}
-              color="#16A34A"
+              color={VERDE}
             />
           </div>
 
@@ -141,7 +168,7 @@ function VentasMensuales() {
                   tickFormatter={(v) => `Q${v}`}
                 />
                 <Tooltip
-                  cursor={{ fill: 'rgba(244, 81, 30, 0.08)' }}
+                  cursor={{ fill: 'color-mix(in srgb, var(--color-primario) 8%, transparent)' }}
                   content={
                     <Globo>
                       {(d) => (
@@ -177,8 +204,20 @@ function MasVendidos() {
     total: Number(p.total_generado),
   }))
 
+  function exportar() {
+    descargarCSV('productos-mas-vendidos.csv', [
+      { titulo: 'Producto', valor: (p) => p.nombre },
+      { titulo: 'Unidades vendidas', valor: (p) => p.unidades },
+      { titulo: 'Total generado', valor: (p) => p.total.toFixed(2) },
+    ], serie)
+  }
+
   return (
-    <Tarjeta titulo="Productos más vendidos" descripcion="Top 10 por unidades vendidas.">
+    <Tarjeta
+      titulo="Productos más vendidos"
+      descripcion="Top 10 por unidades vendidas."
+      accion={<BotonCSV onClick={exportar} disabled={serie.length === 0} />}
+    >
       <Estado cargando={cargando} error={error} recargar={recargar} datos={datos} />
       {datos && serie.length === 0 && <p className="text-texto-suave">Aún no hay ventas registradas.</p>}
 
@@ -194,10 +233,10 @@ function MasVendidos() {
                 width={170}
                 tickLine={false}
                 axisLine={false}
-                tick={{ fill: '#1F2937', fontSize: 13 }}
+                tick={{ fill: OSCURO, fontSize: 13 }}
               />
               <Tooltip
-                cursor={{ fill: 'rgba(31, 41, 55, 0.05)' }}
+                cursor={{ fill: 'color-mix(in srgb, var(--color-secundario) 5%, transparent)' }}
                 content={
                   <Globo>
                     {(d) => (
@@ -214,7 +253,7 @@ function MasVendidos() {
                 {serie.map((p, i) => (
                   <Cell key={p.nombre} fill={PALETA[i % PALETA.length]} />
                 ))}
-                <LabelList dataKey="unidades" position="right" style={{ fill: '#1F2937', fontWeight: 600, fontSize: 13 }} />
+                <LabelList dataKey="unidades" position="right" style={{ fill: OSCURO, fontWeight: 600, fontSize: 13 }} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -231,13 +270,41 @@ function Insignia({ stock, minimo }) {
   return <span className={`${base} bg-green-100 text-green-700`}>Normal</span>
 }
 
+function estadoDe(v) {
+  if (v.stock <= 0) return 'agotado'
+  if (v.stock <= v.stock_minimo) return 'bajo'
+  return 'normal'
+}
+
 function Existencias() {
   const [todo, setTodo] = useState(false)
+  const [texto, setTexto] = useState('')
+  const [estado, setEstado] = useState('todos')
   const { datos, error, cargando, recargar } = useApi('/api/reportes/estado-existencias')
 
   const completo = datos?.inventario_completo ?? []
   const agotadas = completo.filter((v) => v.stock <= 0).length
-  const filas = (todo ? completo : datos?.detalle_bajo_minimo) ?? []
+  const base = (todo ? completo : datos?.detalle_bajo_minimo) ?? []
+
+  const q = texto.trim().toLowerCase()
+  const filas = base.filter((v) => {
+    if (estado !== 'todos' && estadoDe(v) !== estado) return false
+    if (!q) return true
+    return `${v.producto?.nombre ?? ''} ${v.sku ?? ''}`.toLowerCase().includes(q)
+  })
+  const hayFiltros = q !== '' || estado !== 'todos'
+
+  function exportar() {
+    descargarCSV('existencias.csv', [
+      { titulo: 'Producto', valor: (v) => v.producto?.nombre },
+      { titulo: 'SKU', valor: (v) => v.sku },
+      { titulo: 'Talla', valor: (v) => v.talla },
+      { titulo: 'Color', valor: (v) => v.color },
+      { titulo: 'Stock', valor: (v) => v.stock },
+      { titulo: 'Mínimo', valor: (v) => v.stock_minimo },
+      { titulo: 'Estado', valor: (v) => estadoDe(v) },
+    ], filas)
+  }
 
   return (
     <Tarjeta
@@ -254,15 +321,54 @@ function Existencias() {
       {datos && (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Indicador etiqueta="Variantes activas" valor={datos.total_variantes} color="#1F2937" />
-            <Indicador etiqueta="Necesitan reposición" valor={datos.variantes_bajo_stock_minimo} color="#F59E0B" />
-            <Indicador etiqueta="Agotadas" valor={agotadas} color="#DC2626" />
+            <Indicador etiqueta="Variantes activas" valor={datos.total_variantes} color={OSCURO} />
+            <Indicador etiqueta="Necesitan reposición" valor={datos.variantes_bajo_stock_minimo} color={AMBAR} />
+            <Indicador etiqueta="Agotadas" valor={agotadas} color={ROJO} />
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <input
+              type="search"
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+              placeholder="Buscar producto o SKU"
+              aria-label="Buscar producto o SKU"
+              className={`${campo} w-64`}
+            />
+            <select
+              value={estado}
+              onChange={(e) => setEstado(e.target.value)}
+              aria-label="Filtrar por estado"
+              className={campo}
+            >
+              <option value="todos">Todos los estados</option>
+              <option value="agotado">Agotado</option>
+              <option value="bajo">Stock bajo</option>
+              <option value="normal">Normal</option>
+            </select>
+            {hayFiltros && (
+              <button
+                onClick={() => {
+                  setTexto('')
+                  setEstado('todos')
+                }}
+                className="text-sm underline"
+              >
+                Limpiar filtros
+              </button>
+            )}
+            <span className="text-sm text-texto-suave">{filas.length} variante(s)</span>
+            <div className="ml-auto">
+              <BotonCSV onClick={exportar} disabled={filas.length === 0} />
+            </div>
           </div>
 
           {filas.length === 0 ? (
-            <p className="mt-6 text-texto-suave">Todo el inventario está sobre el mínimo.</p>
+            <p className="mt-6 text-texto-suave">
+              {hayFiltros ? 'Ninguna variante coincide con los filtros.' : 'Todo el inventario está sobre el mínimo.'}
+            </p>
           ) : (
-            <div className="mt-6 max-h-[28rem] overflow-auto rounded-lg border border-borde">
+            <div className="mt-4 max-h-[28rem] overflow-auto rounded-lg border border-borde">
               <table className="w-full text-left text-sm">
                 <thead className="sticky top-0 bg-superficie">
                   <tr className="border-b border-borde">
@@ -297,16 +403,202 @@ function Existencias() {
   )
 }
 
-export default function ReportesAdmin() {
+const formatoFecha = (f) =>
+  new Date(f).toLocaleString('es-GT', { dateStyle: 'short', timeStyle: 'short' })
+
+function MovimientosInventario() {
+  const [texto, setTexto] = useState('')
+  const [tipo, setTipo] = useState('todos')
+  const [visibles, setVisibles] = useState(POR_PAGINA)
+  const { datos, error, cargando, recargar } = useApi('/api/reportes/movimientos-inventario')
+
+  const lista = Array.isArray(datos) ? datos : []
+  const q = texto.trim().toLowerCase()
+  const filas = lista.filter((m) => {
+    if (tipo !== 'todos' && m.tipo_movimiento !== tipo) return false
+    if (!q) return true
+    const v = m.variante
+    return `${v?.producto?.nombre ?? ''} ${v?.sku ?? ''} ${m.motivo ?? ''}`.toLowerCase().includes(q)
+  })
+  const hayFiltros = q !== '' || tipo !== 'todos'
+
+  function exportar() {
+    descargarCSV('movimientos-inventario.csv', [
+      { titulo: 'Fecha', valor: (m) => new Date(m.fecha).toISOString() },
+      { titulo: 'Producto', valor: (m) => m.variante?.producto?.nombre },
+      { titulo: 'SKU', valor: (m) => m.variante?.sku },
+      { titulo: 'Talla', valor: (m) => m.variante?.talla },
+      { titulo: 'Color', valor: (m) => m.variante?.color },
+      { titulo: 'Tipo', valor: (m) => m.tipo_movimiento },
+      { titulo: 'Cantidad', valor: (m) => m.cantidad },
+      { titulo: 'Motivo', valor: (m) => m.motivo },
+      { titulo: 'Pedido', valor: (m) => m.id_pedido },
+    ], filas)
+  }
+
   return (
-    <div className="space-y-10">
+    <Tarjeta
+      titulo="Movimientos de inventario"
+      descripcion="Entradas y salidas de stock, de la más reciente a la más antigua."
+    >
+      <Estado cargando={cargando} error={error} recargar={recargar} datos={datos} />
+
+      {datos && (
+        <>
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              type="search"
+              value={texto}
+              onChange={(e) => {
+                setTexto(e.target.value)
+                setVisibles(POR_PAGINA)
+              }}
+              placeholder="Buscar producto, SKU o motivo"
+              aria-label="Buscar producto, SKU o motivo"
+              className={`${campo} w-64`}
+            />
+            <select
+              value={tipo}
+              onChange={(e) => {
+                setTipo(e.target.value)
+                setVisibles(POR_PAGINA)
+              }}
+              aria-label="Filtrar por tipo"
+              className={campo}
+            >
+              <option value="todos">Entradas y salidas</option>
+              <option value="entrada">Solo entradas</option>
+              <option value="salida">Solo salidas</option>
+            </select>
+            {hayFiltros && (
+              <button
+                onClick={() => {
+                  setTexto('')
+                  setTipo('todos')
+                  setVisibles(POR_PAGINA)
+                }}
+                className="text-sm underline"
+              >
+                Limpiar filtros
+              </button>
+            )}
+            <span className="text-sm text-texto-suave">{filas.length} movimiento(s)</span>
+            <div className="ml-auto">
+              <BotonCSV onClick={exportar} disabled={filas.length === 0} />
+            </div>
+          </div>
+
+          {filas.length === 0 ? (
+            <p className="mt-6 text-texto-suave">
+              {hayFiltros ? 'Ningún movimiento coincide con los filtros.' : 'Aún no hay movimientos.'}
+            </p>
+          ) : (
+            <>
+              <div className="mt-4 max-h-[28rem] overflow-auto rounded-lg border border-borde">
+                <table className="w-full text-left text-sm">
+                  <thead className="sticky top-0 bg-superficie">
+                    <tr className="border-b border-borde">
+                      <th className="px-4 py-3 font-semibold">Fecha</th>
+                      <th className="px-4 py-3 font-semibold">Producto</th>
+                      <th className="px-4 py-3 font-semibold">Talla / color</th>
+                      <th className="px-4 py-3 font-semibold">Tipo</th>
+                      <th className="px-4 py-3 text-right font-semibold">Cantidad</th>
+                      <th className="px-4 py-3 font-semibold">Motivo</th>
+                      <th className="px-4 py-3 font-semibold">Pedido</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filas.slice(0, visibles).map((m) => (
+                      <tr key={m.id_movimiento} className="border-b border-borde last:border-0 hover:bg-superficie">
+                        <td className="whitespace-nowrap px-4 py-3 text-texto-suave">{formatoFecha(m.fecha)}</td>
+                        <td className="px-4 py-3">
+                          <span className="font-medium">{m.variante?.producto?.nombre ?? '-'}</span>
+                          <br />
+                          <span className="text-xs text-texto-suave">{m.variante?.sku}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          {[m.variante?.talla, m.variante?.color].filter(Boolean).join(', ') || '-'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                              m.tipo_movimiento === 'entrada'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-amber-100 text-amber-800'
+                            }`}
+                          >
+                            {m.tipo_movimiento === 'entrada' ? 'Entrada' : 'Salida'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold">{m.cantidad}</td>
+                        <td className="px-4 py-3">{m.motivo}</td>
+                        <td className="px-4 py-3 text-texto-suave">{m.id_pedido ? `#${m.id_pedido}` : '-'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {visibles < filas.length && (
+                <button
+                  onClick={() => setVisibles((n) => n + POR_PAGINA)}
+                  className={`${campo} mt-4 font-semibold hover:bg-superficie`}
+                >
+                  Ver más ({filas.length - visibles} restantes)
+                </button>
+              )}
+            </>
+          )}
+        </>
+      )}
+    </Tarjeta>
+  )
+}
+
+const SECCIONES = [
+  { id: 'ventas', etiqueta: 'Ventas mensuales', Componente: VentasMensuales },
+  { id: 'mas-vendidos', etiqueta: 'Más vendidos', Componente: MasVendidos },
+  { id: 'existencias', etiqueta: 'Existencias', Componente: Existencias },
+  { id: 'movimientos', etiqueta: 'Movimientos', Componente: MovimientosInventario },
+]
+
+export default function ReportesAdmin() {
+  const [params, setParams] = useSearchParams()
+  const activa = SECCIONES.find((s) => s.id === params.get('seccion')) ?? SECCIONES[0]
+  const Activa = activa.Componente
+
+  return (
+    <div className="space-y-6">
       <header>
         <h1 className="font-titulo text-3xl font-extrabold uppercase">Reportes</h1>
-        <p className="mt-1 text-sm text-texto-suave">Ventas, productos destacados y estado del inventario.</p>
+        <p className="mt-1 text-sm text-texto-suave">
+          Ventas, productos destacados, estado del inventario y sus movimientos.
+        </p>
       </header>
-      <VentasMensuales />
-      <MasVendidos />
-      <Existencias />
+
+      <div role="tablist" aria-label="Reportes" className="flex gap-1 overflow-x-auto border-b border-borde">
+        {SECCIONES.map((s) => {
+          const seleccionada = s.id === activa.id
+          return (
+            <button
+              key={s.id}
+              role="tab"
+              aria-selected={seleccionada}
+              onClick={() => setParams({ seccion: s.id }, { replace: true })}
+              className={`-mb-px shrink-0 border-b-2 px-4 py-2 text-sm font-semibold ${
+                seleccionada
+                  ? 'border-primario text-primario'
+                  : 'border-transparent text-texto-suave hover:text-texto'
+              }`}
+            >
+              {s.etiqueta}
+            </button>
+          )
+        })}
+      </div>
+
+      <div role="tabpanel">
+        <Activa />
+      </div>
     </div>
   )
 }

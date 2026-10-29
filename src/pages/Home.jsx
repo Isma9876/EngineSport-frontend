@@ -76,7 +76,7 @@ function IlustracionHero() {
 
 function ErrorReintento({ mensaje, onReintentar }) {
   return (
-    <p role="alert" className="mt-3 text-sm text-primario-oscuro">
+    <p role="alert" className="mt-3 text-sm text-estado-error">
       {mensaje}{' '}
       <button onClick={onReintentar} className="underline">
         Reintentar
