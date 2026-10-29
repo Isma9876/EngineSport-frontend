@@ -61,6 +61,15 @@ async function pedir(ruta, opciones) {
   return res
 }
 
+// El encabezado escucha este evento para mostrar cuántas unidades hay en el carrito.
+function avisarCambioCarrito(datos) {
+  try {
+    window.dispatchEvent(new CustomEvent('carrito:cambio', { detail: datos }))
+  } catch {
+    // sin window (pruebas) o evento no soportado
+  }
+}
+
 async function enviar(metodo, ruta, cuerpo) {
   const res = await pedir(ruta, {
     method: metodo,
@@ -68,11 +77,14 @@ async function enviar(metodo, ruta, cuerpo) {
     body: cuerpo !== undefined ? JSON.stringify(cuerpo) : undefined,
   })
   if (res.status === 204) return null
+  let datos = null
   try {
-    return await res.json()
+    datos = await res.json()
   } catch {
-    return null
+    // respuesta sin JSON
   }
+  if (ruta.startsWith('/api/carrito')) avisarCambioCarrito(datos)
+  return datos
 }
 
 export const get = (ruta) => enviar('GET', ruta)
