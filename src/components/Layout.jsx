@@ -133,8 +133,9 @@ export default function Layout() {
                 </svg>
                 {unidades > 0 && (
                   <span
+                    key={unidades}
                     aria-hidden="true"
-                    className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primario px-1 text-xs font-bold text-secundario"
+                    className="t-badge-pop absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primario px-1 text-xs font-bold text-secundario"
                   >
                     {unidades > 99 ? '99+' : unidades}
                   </span>
