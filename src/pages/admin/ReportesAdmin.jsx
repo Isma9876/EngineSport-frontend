@@ -115,7 +115,6 @@ function VentasMensuales() {
     descargarCSV(`ventas-mensuales-${anio}.csv`, [
       { titulo: 'Mes', valor: (m) => MESES_LARGO[m.indice] },
       { titulo: 'Pedidos', valor: (m) => m.pedidos },
-      { titulo: 'Total vendido', valor: (m) => m.total.toFixed(2) },
     ], serie)
   }
 
@@ -208,7 +207,6 @@ function MasVendidos() {
     descargarCSV('productos-mas-vendidos.csv', [
       { titulo: 'Producto', valor: (p) => p.nombre },
       { titulo: 'Unidades vendidas', valor: (p) => p.unidades },
-      { titulo: 'Total generado', valor: (p) => p.total.toFixed(2) },
     ], serie)
   }
 
