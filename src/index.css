@@ -93,7 +93,23 @@ body {
   .t-acc-lg .t-acc-chevron { display: none; }
 }
 
+/* Menú del avatar (05-menu-dropdown): sale con escala suave; al cerrar es más rápido */
+.t-menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.97) translateY(-4px);
+  transform-origin: top right;
+  transition: opacity 150ms var(--ease-smooth-out), transform 150ms var(--ease-smooth-out), visibility 0s linear 150ms;
+}
+.t-menu[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out), transform var(--duration-fast) var(--ease-smooth-out), visibility 0s;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .t-menu { transition: none !important; }
   .t-stagger-line, .t-card, .t-card-img, .t-acc-panel, .t-acc-panel-inner, .t-acc-chevron { transition: none !important; }
   .t-rise, .t-badge-pop { animation: none !important; }
   .t-card:hover, .t-card:hover .t-card-img { transform: none; }
