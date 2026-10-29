@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import api from '../../api.js'
 import Cargando from '../../components/Cargando.jsx'
+import PasosCompra from '../../components/PasosCompra.jsx'
 import { formatoPrecio } from '../../utils/formato.js'
 
 const INTERVALO = 2000
@@ -135,12 +136,36 @@ export default function Confirmacion() {
   }
 
   return (
-    <section>
-      <h1 className={titulo}>¡Pago confirmado!</h1>
-      <p className="mt-2 text-texto-suave">Tu pedido #{id} está {pedido.estado}.</p>
+    <section className="mx-auto max-w-xl">
+      <div className="flex justify-center">
+        <PasosCompra actual={4} />
+      </div>
 
-      <div className="mt-6 max-w-xl rounded bg-superficie p-4">
-        <ul className="space-y-1 text-sm">
+      <div className="mt-6 flex flex-col items-center text-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-estado-disponible text-white">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-10 w-10"
+            aria-hidden="true"
+          >
+            <path d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h1 className="mt-5 font-titulo text-3xl font-extrabold uppercase">¡Pago confirmado!</h1>
+        <p className="mt-2 text-texto-suave">
+          Gracias por tu compra. Tu pedido #{id} está {pedido.estado}.
+        </p>
+      </div>
+
+      <div className="mt-8 rounded bg-superficie p-4">
+        <h2 className="font-titulo text-lg font-bold uppercase">Resumen del pedido</h2>
+        <ul className="mt-3 space-y-1 text-sm">
           {(pedido.detalles ?? []).map((d) => {
             const v = d.variante
             const extra = [v?.talla, v?.color].filter(Boolean).join(', ')
@@ -182,20 +207,22 @@ export default function Confirmacion() {
       </div>
 
       {errorPdf && (
-        <p role="alert" className="mt-3 text-sm text-primario-oscuro">
+        <p role="alert" className="mt-3 text-center text-sm text-primario-oscuro">
           {errorPdf}
         </p>
       )}
-      <div className="mt-6 flex flex-wrap items-center gap-4">
+      <div className="mt-6 flex flex-col items-center gap-3">
         <button onClick={descargarComprobante} disabled={descargando} className={botonPrimario}>
           {descargando ? 'Generando...' : 'Descargar comprobante'}
         </button>
-        <Link to="/mis-pedidos" className="text-sm underline">
-          Ver mis pedidos
-        </Link>
-        <Link to="/productos" className="text-sm underline">
-          Seguir comprando
-        </Link>
+        <div className="flex gap-4 text-sm">
+          <Link to="/mis-pedidos" className="underline">
+            Ver mis pedidos
+          </Link>
+          <Link to="/productos" className="underline">
+            Seguir comprando
+          </Link>
+        </div>
       </div>
     </section>
   )

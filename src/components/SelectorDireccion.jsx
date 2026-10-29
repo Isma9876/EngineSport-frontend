@@ -69,6 +69,8 @@ export default function SelectorDireccion({ idCliente, valor, onChange, deshabil
                   disabled={deshabilitado}
                   checked={elegidaId === idDe(d)}
                   onChange={() => onChange(idDe(d))}
+                  className="mt-1 h-4 w-4 shrink-0"
+                  style={{ accentColor: '#f45124' }}
                 />
                 <span className="text-sm">
                   <span className="font-semibold">{d.direccion}</span>

@@ -4,11 +4,13 @@ import api from '../../api.js'
 import useApi from '../../hooks/useApi.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 import Cargando from '../../components/Cargando.jsx'
+import PasosCompra from '../../components/PasosCompra.jsx'
 import SelectorDireccion from '../../components/SelectorDireccion.jsx'
 import { formatoPrecio } from '../../utils/formato.js'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import PagoStripe from './PagoStripe.jsx'
+import { appearance, fonts } from '../../utils/stripeAppearance.js'
 
 const titulo = 'font-titulo text-2xl font-extrabold uppercase'
 const clavePublica = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
@@ -126,11 +128,11 @@ export default function Checkout() {
   }
 
   const r = carrito.resumen
-
+  
   return (
     <section>
       <h1 className={titulo}>Checkout</h1>
-
+      <PasosCompra actual={2} />
       <div className="mt-6 grid gap-8 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <div>
@@ -165,9 +167,9 @@ export default function Checkout() {
               >
                 {procesando ? 'Preparando pago...' : `Pagar ${formatoPrecio(r.total)}`}
               </button>
-            ) : (
+                       ) : (
               <div className="mt-3">
-                <Elements stripe={stripePromise} options={{ clientSecret }}>
+                <Elements stripe={stripePromise} options={{ clientSecret, appearance, fonts }}>
                   <PagoStripe
                     idPedido={pedidoId}
                     total={totalPedido}
