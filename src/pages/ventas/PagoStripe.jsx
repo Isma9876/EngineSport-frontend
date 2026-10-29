@@ -41,7 +41,7 @@ export default function PagoStripe({ idPedido, total, onCancelar, bloqueado }) {
         <button
           type="submit"
           disabled={!stripe || enviando || bloqueado}
-          className="rounded bg-primario px-5 py-2 font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
+          className="rounded bg-primario px-5 py-2 font-semibold text-secundario hover:bg-primario-oscuro disabled:opacity-40"
         >
           {enviando ? 'Procesando...' : `Pagar ${formatoPrecio(total)}`}
         </button>

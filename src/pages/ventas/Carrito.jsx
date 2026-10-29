@@ -72,7 +72,7 @@ export default function Carrito() {
         <p className="mt-4 text-texto">{error.message}</p>
         <button
           onClick={recargar}
-          className="mt-4 rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro"
+          className="mt-4 rounded bg-primario px-4 py-2 font-semibold text-secundario hover:bg-primario-oscuro"
         >
           Reintentar
         </button>
@@ -89,7 +89,7 @@ export default function Carrito() {
         <p className="mt-4 text-texto-suave">Tu carrito está vacío.</p>
         <Link
           to="/productos"
-          className="mt-4 inline-block rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro"
+          className="mt-4 inline-block rounded bg-primario px-4 py-2 font-semibold text-secundario hover:bg-primario-oscuro"
         >
           Ver productos
         </Link>
@@ -238,7 +238,7 @@ export default function Carrito() {
               navigate('/checkout', { state: { cupon: carrito.cupon?.valido ? carrito.cupon.codigo : null } })
             }
             disabled={hayProblemas || ocupado !== null}
-            className="mt-4 w-full rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
+            className="mt-4 w-full rounded bg-primario px-4 py-2 font-semibold text-secundario hover:bg-primario-oscuro disabled:opacity-40"
           >
             Continuar al pago
           </button>

@@ -8,7 +8,7 @@ const INTERVALO = 2000
 const MAX_INTENTOS = 30 // ~60 segundos esperando el webhook
 const titulo = 'font-titulo text-2xl font-extrabold uppercase'
 const botonPrimario =
-  'inline-block rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40'
+  'inline-block rounded bg-primario px-4 py-2 font-semibold text-secundario hover:bg-primario-oscuro disabled:opacity-40'
 
 export default function Confirmacion() {
   const { id } = useParams()

@@ -97,7 +97,7 @@ export default function Checkout() {
         <p className="mt-4">{errCarrito.message}</p>
         <button
           onClick={recargarCarrito}
-          className="mt-4 rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro"
+          className="mt-4 rounded bg-primario px-4 py-2 font-semibold text-secundario hover:bg-primario-oscuro"
         >
           Reintentar
         </button>
@@ -117,7 +117,7 @@ export default function Checkout() {
         </p>
         <Link
           to={items.length === 0 ? '/productos' : '/carrito'}
-          className="mt-4 inline-block rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro"
+          className="mt-4 inline-block rounded bg-primario px-4 py-2 font-semibold text-secundario hover:bg-primario-oscuro"
         >
           {items.length === 0 ? 'Ver productos' : 'Volver al carrito'}
         </Link>
@@ -161,7 +161,7 @@ export default function Checkout() {
               <button
                 onClick={iniciarPago}
                 disabled={procesando || !elegidaId}
-                className="mt-3 rounded bg-primario px-5 py-2 font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
+                className="mt-3 rounded bg-primario px-5 py-2 font-semibold text-secundario hover:bg-primario-oscuro disabled:opacity-40"
               >
                 {procesando ? 'Preparando pago...' : `Pagar ${formatoPrecio(r.total)}`}
               </button>

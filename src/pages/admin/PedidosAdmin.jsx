@@ -111,7 +111,7 @@ export default function PedidosAdmin() {
             }}
             aria-pressed={estado === f.valor}
             className={`rounded border px-3 py-1 text-sm ${
-              estado === f.valor ? 'border-primario bg-primario text-white' : 'border-borde'
+              estado === f.valor ? 'border-primario bg-primario text-secundario' : 'border-borde'
             }`}
           >
             {f.texto}
@@ -214,7 +214,7 @@ export default function PedidosAdmin() {
                             <button
                               type="submit"
                               disabled={trabajando}
-                              className="rounded bg-primario px-4 py-1 font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
+                              className="rounded bg-primario px-4 py-1 font-semibold text-secundario hover:bg-primario-oscuro disabled:opacity-40"
                             >
                               {trabajando ? 'Guardando...' : 'Marcar como enviado'}
                             </button>

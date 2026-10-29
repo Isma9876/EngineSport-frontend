@@ -150,8 +150,8 @@ export default function Layout() {
     <div className="flex min-h-screen flex-col">
       <header className="relative bg-secundario text-texto-claro">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link to="/" className="font-titulo text-2xl font-extrabold uppercase text-primario" onClick={cerrar}>
-            EngineSport
+          <Link to="/" onClick={cerrar} aria-label="EngineSport, inicio">
+            <img src="/logo-horizontal.png" alt="EngineSport" className="h-9 w-auto" />
           </Link>
           <button
             type="button"
@@ -275,7 +275,7 @@ export default function Layout() {
       <footer className="bg-secundario text-texto-claro">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="font-titulo text-2xl font-extrabold uppercase text-primario">EngineSport</p>
+            <img src="/logo-horizontal.png" alt="EngineSport" className="h-9 w-auto" />
             <p className="mt-3 max-w-xs text-sm">
               Artículos deportivos para entrenar, competir y disfrutar, con compra en línea.
             </p>

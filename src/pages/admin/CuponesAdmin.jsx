@@ -106,7 +106,7 @@ export default function CuponesAdmin() {
         </div>
         <button
           onClick={() => setAbierto(!abierto)}
-          className="rounded-lg bg-primario px-4 py-2 text-sm font-semibold text-white hover:bg-primario-oscuro"
+          className="rounded-lg bg-primario px-4 py-2 text-sm font-semibold text-secundario hover:bg-primario-oscuro"
         >
           {abierto ? 'Cerrar formulario' : 'Nuevo cupón'}
         </button>
@@ -159,7 +159,7 @@ export default function CuponesAdmin() {
             <button
               type="submit"
               disabled={guardando}
-              className="rounded-lg bg-primario px-5 py-2 text-sm font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
+              className="rounded-lg bg-primario px-5 py-2 text-sm font-semibold text-secundario hover:bg-primario-oscuro disabled:opacity-40"
             >
               {guardando ? 'Guardando...' : 'Crear cupón'}
             </button>
