@@ -15,7 +15,7 @@ export default function PasosCompra({ actual }) {
                 hecho
                   ? 'bg-estado-disponible text-white'
                   : activo
-                    ? 'bg-primario text-white'
+                    ? 'bg-primario text-secundario'
                     : 'border border-borde text-texto-suave'
               }`}
             >

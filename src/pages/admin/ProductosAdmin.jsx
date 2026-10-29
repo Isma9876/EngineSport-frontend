@@ -304,7 +304,7 @@ export default function ProductosAdmin() {
         </div>
         <button
           onClick={abrirNuevo}
-          className="rounded-lg bg-primario px-4 py-2 text-sm font-semibold text-white hover:bg-primario-oscuro"
+          className="rounded-lg bg-primario px-4 py-2 text-sm font-semibold text-secundario hover:bg-primario-oscuro"
         >
           {abierto && editando === null ? 'Cerrar formulario' : 'Nuevo producto'}
         </button>
@@ -415,7 +415,7 @@ export default function ProductosAdmin() {
             <button
               type="submit"
               disabled={guardando}
-              className="rounded-lg bg-primario px-5 py-2 text-sm font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
+              className="rounded-lg bg-primario px-5 py-2 text-sm font-semibold text-secundario hover:bg-primario-oscuro disabled:opacity-40"
             >
               {guardando ? 'Guardando...' : editando === null ? 'Crear producto' : 'Guardar cambios'}
             </button>

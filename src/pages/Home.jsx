@@ -56,8 +56,8 @@ function IconoCategoria({ nombre }) {
 function IlustracionHero() {
   return (
     <svg viewBox="0 0 320 320" className="h-full w-full max-w-sm" aria-hidden="true">
-      <circle cx="170" cy="150" r="118" fill="#f45124" />
-      <g fill="none" stroke="#181a18" strokeWidth="6" strokeLinecap="round">
+      <circle cx="170" cy="150" r="118" fill="#3ddc97" />
+      <g fill="none" stroke="#0f3d2e" strokeWidth="6" strokeLinecap="round">
         <circle cx="170" cy="150" r="118" />
         <path d="M52 150h236" />
         <path d="M170 32c-52 46-52 190 0 236" />
@@ -65,7 +65,7 @@ function IlustracionHero() {
         <path d="M88 66c40 28 40 156 0 184" />
         <path d="M252 66c-40 28-40 156 0 184" />
       </g>
-      <g stroke="#d7dad3" strokeWidth="5" strokeLinecap="round" opacity="0.7">
+      <g stroke="#d6e4dc" strokeWidth="5" strokeLinecap="round" opacity="0.7">
         <path d="M10 262h120" />
         <path d="M40 286h150" />
         <path d="M20 238h70" />
@@ -76,7 +76,7 @@ function IlustracionHero() {
 
 function ErrorReintento({ mensaje, onReintentar }) {
   return (
-    <p role="alert" className="mt-3 text-sm text-primario-oscuro">
+    <p role="alert" className="mt-3 text-sm text-estado-error">
       {mensaje}{' '}
       <button onClick={onReintentar} className="underline">
         Reintentar

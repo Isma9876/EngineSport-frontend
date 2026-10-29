@@ -96,7 +96,7 @@ export default function MisPedidos() {
             onClick={() => cambiarFiltro(f.valor)}
             aria-pressed={estado === f.valor}
             className={`rounded border px-3 py-1 text-sm ${
-              estado === f.valor ? 'border-primario bg-primario text-white' : 'border-borde'
+              estado === f.valor ? 'border-primario bg-primario text-secundario' : 'border-borde'
             }`}
           >
             {f.texto}
@@ -128,7 +128,7 @@ export default function MisPedidos() {
           </p>
           <Link
             to="/productos"
-            className="mt-4 inline-block rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro"
+            className="mt-4 inline-block rounded bg-primario px-4 py-2 font-semibold text-secundario hover:bg-primario-oscuro"
           >
             Ver productos
           </Link>

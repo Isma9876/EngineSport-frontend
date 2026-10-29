@@ -288,7 +288,7 @@ export default function VariantesPanel({ producto, onCambio, onCerrar }) {
             <button
               type="submit"
               disabled={guardando}
-              className="rounded-lg bg-primario px-5 py-2 text-sm font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
+              className="rounded-lg bg-primario px-5 py-2 text-sm font-semibold text-secundario hover:bg-primario-oscuro disabled:opacity-40"
             >
               {guardando ? 'Guardando...' : accion.modo === 'nueva' ? 'Agregar variante' : 'Guardar cambios'}
             </button>
@@ -323,7 +323,7 @@ export default function VariantesPanel({ producto, onCambio, onCerrar }) {
             <button
               type="submit"
               disabled={guardando}
-              className="rounded-lg bg-primario px-5 py-2 text-sm font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
+              className="rounded-lg bg-primario px-5 py-2 text-sm font-semibold text-secundario hover:bg-primario-oscuro disabled:opacity-40"
             >
               {guardando ? 'Guardando...' : 'Registrar ajuste'}
             </button>

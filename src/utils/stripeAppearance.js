@@ -3,21 +3,21 @@
 export const appearance = {
   theme: 'stripe',
   variables: {
-    colorPrimary: '#f45124',
+    colorPrimary: '#16784f',
     colorBackground: '#ffffff',
-    colorText: '#181a18',
+    colorText: '#0f3d2e',
     colorTextSecondary: '#686d67',
-    colorDanger: '#d23c0e',
+    colorDanger: '#b42318',
     fontFamily: 'Inter, system-ui, sans-serif',
     borderRadius: '4px',
     spacingUnit: '4px',
   },
   rules: {
     '.Input': { border: '1px solid #dcddd6', boxShadow: 'none' },
-    '.Input:focus': { border: '1px solid #f45124', boxShadow: '0 0 0 1px #f45124' },
+    '.Input:focus': { border: '1px solid #16784f', boxShadow: '0 0 0 1px #16784f' },
     '.Label': { fontWeight: '500' },
     '.Tab': { border: '1px solid #dcddd6', boxShadow: 'none' },
-    '.Tab--selected': { borderColor: '#f45124', color: '#f45124', boxShadow: '0 0 0 1px #f45124' },
+    '.Tab--selected': { borderColor: '#16784f', color: '#16784f', boxShadow: '0 0 0 1px #16784f' },
   },
 }
 

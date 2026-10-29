@@ -126,7 +126,7 @@ export default function Carrito() {
         <p className="mt-4 text-texto">{error.message}</p>
         <button
           onClick={recargar}
-          className="mt-4 rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro"
+          className="mt-4 rounded bg-primario px-4 py-2 font-semibold text-secundario hover:bg-primario-oscuro"
         >
           Reintentar
         </button>
@@ -149,7 +149,7 @@ export default function Carrito() {
           <p className="mt-2 text-texto-suave">Agrega productos y aparecerán aquí.</p>
           <Link
             to="/productos"
-            className="mt-5 inline-block rounded bg-primario px-5 py-2 font-semibold text-white hover:bg-primario-oscuro"
+            className="mt-5 inline-block rounded bg-primario px-5 py-2 font-semibold text-secundario hover:bg-primario-oscuro"
           >
             Ver productos
           </Link>
@@ -215,7 +215,7 @@ export default function Carrito() {
                       El precio cambió (antes {formatoPrecio(item.precio_anterior)}).
                     </p>
                   )}
-                  {aviso && <p className="text-sm font-semibold text-primario-oscuro">{aviso}</p>}
+                  {aviso && <p className="text-sm font-semibold text-estado-error">{aviso}</p>}
 
                   <div className="mt-2 flex items-center gap-3">
                     <button
@@ -276,7 +276,7 @@ export default function Carrito() {
             </button>
           </form>
           {carrito.cupon && !carrito.cupon.valido && (
-            <p className="mt-1 text-sm text-primario-oscuro">{carrito.cupon.mensaje}</p>
+            <p className="mt-1 text-sm text-estado-error">{carrito.cupon.mensaje}</p>
           )}
           {carrito.cupon?.valido && (
             <p className="mt-1 text-sm text-estado-disponible">
@@ -333,7 +333,7 @@ export default function Carrito() {
           )}
 
           {hayProblemas && (
-            <p className="mt-3 text-sm text-primario-oscuro">
+            <p className="mt-3 text-sm text-estado-error">
               Resuelve los productos con aviso para continuar.
             </p>
           )}
@@ -342,7 +342,7 @@ export default function Carrito() {
               navigate('/checkout', { state: { cupon: carrito.cupon?.valido ? carrito.cupon.codigo : null } })
             }
             disabled={hayProblemas || ocupado !== null}
-            className="mt-4 w-full rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
+            className="mt-4 w-full rounded bg-primario px-4 py-2 font-semibold text-secundario hover:bg-primario-oscuro disabled:opacity-40"
           >
             Continuar al pago
           </button>

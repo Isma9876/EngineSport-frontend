@@ -5,18 +5,19 @@
  * en lugar de tailwind.config). Valores provisionales.
  */
 @theme {
-  --color-primario: #f45124;
-  --color-primario-oscuro: #d23c0e;
-  --color-secundario: #181a18;
+  --color-primario: #3ddc97;
+  --color-primario-oscuro: #16784f;
+  --color-secundario: #0f3d2e;
   --color-fondo: #ffffff;
-  --color-superficie: #f5f5f0;
-  --color-texto: #181a18;
-  --color-texto-suave: #686d67;
-  --color-texto-claro: #d7dad3;
-  --color-borde: #dcddd6;
+  --color-superficie: #f1f7f4;
+  --color-texto: #0f3d2e;
+  --color-texto-suave: #55695f;
+  --color-texto-claro: #d6e4dc;
+  --color-borde: #d5e3dc;
   --color-estado-disponible: #1b6e3c;
   --color-estado-pocas: #8a5a00;
-  --color-estado-agotado: #686d67;
+  --color-estado-agotado: #55695f;
+  --color-estado-error: #b42318;
 
   --font-sans: "Inter", system-ui, sans-serif;
   --font-titulo: "Barlow Condensed", "Arial Narrow", sans-serif;
