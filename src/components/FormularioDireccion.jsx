@@ -1,7 +1,8 @@
 import { useState } from 'react'
 
 const VACIA = { direccion: '', ciudad: '', estado: '', codigo_postal: '', pais: 'Guatemala' }
-const campo = 'w-full rounded border border-borde bg-fondo px-2 py-1'
+const campo =
+  'mt-1 w-full rounded-lg border border-borde bg-fondo px-3 py-2 transition-colors hover:border-texto-suave focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/40'
 
 // Formulario de dirección, reutilizable para crear y para editar.
 // - inicial: dirección existente al editar (los campos null se muestran vacíos).
@@ -45,7 +46,7 @@ export default function FormularioDireccion({
   }
 
   return (
-    <form onSubmit={enviar} className="mt-3 grid gap-3 rounded bg-superficie p-4 sm:grid-cols-2">
+    <form onSubmit={enviar} className="mt-3 grid gap-3 rounded-lg border border-borde bg-superficie p-4 sm:grid-cols-2">
       <label className="text-sm sm:col-span-2">
         Dirección
         <input value={form.direccion} onChange={cambiar('direccion')} className={campo} />
@@ -75,7 +76,7 @@ export default function FormularioDireccion({
         <button
           type="submit"
           disabled={guardando}
-          className="rounded bg-primario px-4 py-2 font-semibold text-white hover:bg-primario-oscuro disabled:opacity-40"
+          className="rounded-lg bg-primario px-4 py-2 font-semibold text-secundario transition-colors hover:bg-primario-oscuro hover:text-white disabled:opacity-40"
         >
           {guardando ? 'Guardando...' : textoGuardar}
         </button>
