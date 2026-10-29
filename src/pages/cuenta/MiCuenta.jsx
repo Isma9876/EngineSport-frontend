@@ -6,12 +6,17 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import Cargando from '../../components/Cargando.jsx'
 import FormularioDireccion from '../../components/FormularioDireccion.jsx'
 
-const titulo = 'font-titulo text-2xl font-extrabold uppercase'
-const subtitulo = 'font-titulo text-xl font-bold uppercase'
-const campo = 'mt-1 w-full rounded border border-borde bg-fondo px-3 py-2'
+const titulo = 'font-titulo text-3xl font-extrabold uppercase'
+const subtitulo = 'border-l-4 border-primario pl-3 font-titulo text-xl font-bold uppercase'
+const tarjeta = 'rounded-xl border border-borde bg-fondo p-5 shadow-sm'
+const campo =
+  'mt-1 w-full rounded-lg border border-borde bg-fondo px-3 py-2 transition-colors hover:border-texto-suave focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/40 disabled:bg-superficie'
 const botonPrimario =
-  'rounded bg-primario px-4 py-2 font-semibold text-secundario hover:bg-primario-oscuro hover:text-white disabled:opacity-60'
-const botonChico = 'rounded border border-borde px-3 py-1 text-sm hover:border-primario disabled:opacity-40'
+  'rounded-lg bg-primario px-4 py-2 font-semibold text-secundario transition-colors hover:bg-primario-oscuro hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primario disabled:opacity-60'
+const botonChico =
+  'rounded-lg border border-borde px-3 py-1 text-sm transition-colors hover:border-primario hover:bg-superficie disabled:opacity-40'
+const botonPeligro =
+  'rounded-lg border border-red-300 px-3 py-1 text-sm text-red-700 transition-colors hover:bg-red-50 disabled:opacity-40'
 const idDe = (d) => d.id ?? d.id_direccion
 
 function ErrorReintento({ mensaje, onReintentar }) {
@@ -89,8 +94,8 @@ function FormDatos({ cliente }) {
         </p>
       )}
       {guardado && (
-        <p role="status" className="text-sm text-estado-disponible sm:col-span-2">
-          Datos guardados.
+        <p role="status" className="rounded-lg bg-primario/15 px-3 py-2 text-sm font-medium text-secundario sm:col-span-2">
+          ✓ Datos guardados.
         </p>
       )}
       <div className="sm:col-span-2">
@@ -105,7 +110,7 @@ function FormDatos({ cliente }) {
 function DatosPersonales({ idCliente }) {
   const { datos, error, cargando, recargar } = useApi(`/api/clientes/${idCliente}`)
   return (
-    <div>
+    <div className={tarjeta}>
       <h2 className={subtitulo}>Mis datos</h2>
       {cargando && <Cargando texto="Cargando tus datos..." />}
       {error && <ErrorReintento mensaje={error.message} onReintentar={recargar} />}
@@ -156,7 +161,7 @@ function Direcciones({ idCliente }) {
   }
 
   return (
-    <div>
+    <div className={tarjeta}>
       <h2 className={subtitulo}>Mis direcciones</h2>
       {cargando && <Cargando texto="Cargando direcciones..." />}
       {error && <ErrorReintento mensaje={error.message} onReintentar={recargar} />}
@@ -187,11 +192,16 @@ function Direcciones({ idCliente }) {
               )
             }
             return (
-              <li key={id} className="rounded border border-borde p-3">
+              <li
+                key={id}
+                className={`rounded-lg border p-3 ${d.es_predeterminada ? 'border-primario bg-primario/10' : 'border-borde'}`}
+              >
                 <p className="text-sm">
                   <span className="font-semibold">{d.direccion}</span>
                   {d.es_predeterminada && (
-                    <span className="ml-2 text-xs text-texto-suave">(predeterminada)</span>
+                    <span className="ml-2 rounded-full bg-primario px-2 py-0.5 text-xs font-semibold text-secundario">
+                      Predeterminada
+                    </span>
                   )}
                   <br />
                   {[d.ciudad, d.estado, d.pais].filter(Boolean).join(', ')}
@@ -209,7 +219,7 @@ function Direcciones({ idCliente }) {
                   {confirmar === id ? (
                     <>
                       <span className="text-sm">¿Eliminar esta dirección?</span>
-                      <button disabled={ocupado === id} onClick={() => eliminar(id)} className={botonChico}>
+                      <button disabled={ocupado === id} onClick={() => eliminar(id)} className={botonPeligro}>
                         Sí, eliminar
                       </button>
                       <button onClick={() => setConfirmar(null)} className="text-sm underline">
@@ -217,7 +227,7 @@ function Direcciones({ idCliente }) {
                       </button>
                     </>
                   ) : (
-                    <button disabled={ocupado === id} onClick={() => setConfirmar(id)} className={botonChico}>
+                    <button disabled={ocupado === id} onClick={() => setConfirmar(id)} className={botonPeligro}>
                       Eliminar
                     </button>
                   )}
@@ -232,8 +242,8 @@ function Direcciones({ idCliente }) {
         <FormularioDireccion onGuardar={guardarNueva} onCancelar={() => setModo(null)} />
       )}
       {datos && modo !== 'nueva' && (
-        <button onClick={() => setModo('nueva')} className="mt-3 text-sm underline">
-          Agregar dirección
+        <button onClick={() => setModo('nueva')} className={`mt-3 ${botonChico} font-semibold`}>
+          + Agregar dirección
         </button>
       )}
     </div>
@@ -267,14 +277,16 @@ function DesactivarCuenta() {
   }
 
   return (
-    <div className="border-t border-borde pt-6">
-      <h2 className={subtitulo}>Desactivar mi cuenta</h2>
+    <div className="rounded-xl border border-red-200 bg-red-50 p-5">
+      <h2 className="border-l-4 border-red-600 pl-3 font-titulo text-xl font-bold uppercase text-red-800">
+        Desactivar mi cuenta
+      </h2>
       <p className="mt-2 text-sm text-texto-suave">
         Tu cuenta quedará desactivada y se cerrará tu sesión. Tus pedidos se conservan, y un empleado puede
         reactivarla si lo necesitas.
       </p>
       {!abierto ? (
-        <button onClick={() => setAbierto(true)} className={`mt-3 ${botonChico}`}>
+        <button onClick={() => setAbierto(true)} className={`mt-3 ${botonPeligro} bg-white`}>
           Desactivar mi cuenta
         </button>
       ) : (
@@ -295,7 +307,11 @@ function DesactivarCuenta() {
             </p>
           )}
           <div className="flex gap-3">
-            <button type="submit" disabled={enviando} className={botonPrimario}>
+            <button
+              type="submit"
+              disabled={enviando}
+              className="rounded-lg bg-red-700 px-4 py-2 font-semibold text-white transition-colors hover:bg-red-800 disabled:opacity-60"
+            >
               {enviando ? 'Desactivando...' : 'Desactivar cuenta'}
             </button>
             <button
@@ -333,9 +349,23 @@ export default function MiCuenta() {
 
   return (
     <section className="mx-auto max-w-3xl space-y-8">
-      <div>
-        <h1 className={titulo}>Mi cuenta</h1>
-        <Link to="/mis-pedidos" className="text-sm underline">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-secundario px-6 py-5 text-texto-claro">
+        <div className="flex items-center gap-4">
+          <span
+            aria-hidden="true"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primario font-titulo text-2xl font-extrabold text-secundario"
+          >
+            {`${cliente?.nombre?.[0] ?? ''}${cliente?.apellido?.[0] ?? ''}`.toUpperCase() || '?'}
+          </span>
+          <div>
+            <h1 className={`${titulo} text-white`}>Mi cuenta</h1>
+            <p className="text-sm">{[cliente?.nombre, cliente?.apellido].filter(Boolean).join(' ')}</p>
+          </div>
+        </div>
+        <Link
+          to="/mis-pedidos"
+          className="rounded-lg bg-primario px-4 py-2 text-sm font-semibold text-secundario hover:bg-primario-oscuro hover:text-white focus-visible:outline-2 focus-visible:outline-white"
+        >
           Ver mis pedidos
         </Link>
       </div>
