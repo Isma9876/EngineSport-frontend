@@ -1,6 +1,8 @@
 // Cliente único para la API. Nadie más usa fetch suelto.
 const BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
 const RUTA_LOGIN = '/api/auth/login'
+// Aquí un 401 significa "contraseña incorrecta", no "sesión vencida".
+const RUTA_ELIMINAR_CUENTA = '/api/clientes/me/eliminar-cuenta'
 
 let onSessionExpired = null
 
@@ -37,9 +39,10 @@ async function leerError(res) {
 }
 
 function manejarSesion(ruta, error) {
+  const sinCierre = ruta === RUTA_LOGIN || ruta === RUTA_ELIMINAR_CUENTA
   const vencida =
-    (error.status === 401 && ruta !== RUTA_LOGIN) ||
-    (error.status === 403 && error.code === 'CUENTA_DESACTIVADA' && ruta !== RUTA_LOGIN)
+    (error.status === 401 && !sinCierre) ||
+    (error.status === 403 && error.code === 'CUENTA_DESACTIVADA' && !sinCierre)
   if (vencida && onSessionExpired) onSessionExpired(error)
 }
 

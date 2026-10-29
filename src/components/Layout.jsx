@@ -39,6 +39,9 @@ export default function Layout() {
                 {usuario.tipo === 'empleado' && (
                   <NavLink to="/admin" className={enlace}>Admin</NavLink>
                 )}
+                {usuario.tipo === 'cliente' && (
+                  <NavLink to="/mi-cuenta" className={enlace}>Mi cuenta</NavLink>
+                )}
                 <span className="text-sm text-texto-claro">{usuario.email}</span>
                 <button
                   type="button"
