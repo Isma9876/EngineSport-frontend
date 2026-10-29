@@ -1,18 +1,50 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import useContadorCarrito from '../hooks/useContadorCarrito.js'
 
 const enlace = ({ isActive }) =>
   `rounded px-2 py-1 hover:text-primario ${isActive ? 'font-semibold text-primario' : ''}`
 
+const enlacePie = 'hover:text-primario hover:underline'
+
 const ANIO = new Date().getFullYear()
 
+// Iniciales para el círculo de usuario: nombre y apellido si se conocen, si no la primera letra del correo.
+function iniciales(usuario, cliente) {
+  const n = `${cliente?.nombre?.[0] ?? ''}${cliente?.apellido?.[0] ?? ''}`
+  return (n || usuario?.email?.[0] || '?').toUpperCase()
+}
+
+function Avatar({ texto }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primario text-sm font-bold text-secundario"
+    >
+      {texto}
+    </span>
+  )
+}
+
+function ColumnaPie({ titulo, children }) {
+  return (
+    <div>
+      <h2 className="font-titulo text-lg font-bold uppercase text-white">{titulo}</h2>
+      <ul className="mt-3 space-y-2 text-sm">{children}</ul>
+    </div>
+  )
+}
+
 export default function Layout() {
-  const { usuario, logout } = useAuth()
+  const { usuario, cliente, logout } = useAuth()
   const navigate = useNavigate()
   const [abierto, setAbierto] = useState(false)
   const [busqueda, setBusqueda] = useState('')
   const cerrar = () => setAbierto(false)
+  const esCliente = usuario?.tipo === 'cliente'
+  const esEmpleado = usuario?.tipo === 'empleado'
+  const unidades = useContadorCarrito(esCliente ? usuario.id : null)
 
   const buscar = (e) => {
     e.preventDefault()
@@ -76,33 +108,61 @@ export default function Layout() {
 
             <NavLink to="/productos" className={enlace}>Productos</NavLink>
 
-            <NavLink to="/carrito" className={enlace} aria-label="Carrito" title="Carrito">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-6 w-6"
-                aria-hidden="true"
+            {/* Los empleados no tienen carrito */}
+            {!esEmpleado && (
+              <NavLink
+                to="/carrito"
+                className={(estado) => `relative ${enlace(estado)}`}
+                aria-label={unidades > 0 ? `Carrito, ${unidades} unidades` : 'Carrito'}
+                title="Carrito"
               >
-                <circle cx="9" cy="20" r="1.5" />
-                <circle cx="18" cy="20" r="1.5" />
-                <path d="M2 3h3l2.6 12.4a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 7H6" />
-              </svg>
-            </NavLink>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-6 w-6"
+                  aria-hidden="true"
+                >
+                  <circle cx="9" cy="20" r="1.5" />
+                  <circle cx="18" cy="20" r="1.5" />
+                  <path d="M2 3h3l2.6 12.4a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 7H6" />
+                </svg>
+                {unidades > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primario px-1 text-xs font-bold text-secundario"
+                  >
+                    {unidades > 99 ? '99+' : unidades}
+                  </span>
+                )}
+              </NavLink>
+            )}
 
             {usuario ? (
               <>
-                {usuario.tipo === 'empleado' && (
-                  <NavLink to="/admin" className={enlace}>Admin</NavLink>
+                {esEmpleado && <NavLink to="/admin" className={enlace}>Admin</NavLink>}
+                {esCliente && (
+                  <NavLink
+                    to="/mi-cuenta"
+                    title={usuario.email}
+                    className={(estado) => `flex items-center gap-2 ${enlace(estado)}`}
+                  >
+                    <Avatar texto={iniciales(usuario, cliente)} />
+                    <span>Mi cuenta</span>
+                  </NavLink>
                 )}
-                {usuario.tipo === 'cliente' && (
-                  <NavLink to="/mi-cuenta" className={enlace}>Mi cuenta</NavLink>
+                {esEmpleado && (
+                  <span title={usuario.email} className="flex items-center">
+                    <Avatar texto={iniciales(usuario, cliente)} />
+                    <span className="sr-only">{usuario.email}</span>
+                  </span>
                 )}
-                <span className="hidden text-sm text-texto-claro lg:inline">{usuario.email}</span>
+                {/* En el menú móvil no hay tooltip: se muestra el correo */}
+                <span className="text-sm text-texto-claro md:hidden">{usuario.email}</span>
                 <button
                   type="button"
                   onClick={logout}
@@ -123,8 +183,43 @@ export default function Layout() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
         <Outlet />
       </main>
-      <footer className="bg-secundario py-4 text-center text-sm text-texto-claro">
-        © {ANIO} EngineSport. Todos los derechos reservados.
+      <footer className="bg-secundario text-texto-claro">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p className="font-titulo text-2xl font-extrabold uppercase text-primario">EngineSport</p>
+            <p className="mt-3 max-w-xs text-sm">
+              Artículos deportivos para entrenar, competir y disfrutar, con compra en línea.
+            </p>
+          </div>
+          <ColumnaPie titulo="Tienda">
+            <li><Link to="/" className={enlacePie}>Inicio</Link></li>
+            <li><Link to="/productos" className={enlacePie}>Productos</Link></li>
+            {!esEmpleado && <li><Link to="/carrito" className={enlacePie}>Carrito</Link></li>}
+          </ColumnaPie>
+          <ColumnaPie titulo="Tu cuenta">
+            {esCliente && (
+              <>
+                <li><Link to="/mi-cuenta" className={enlacePie}>Mi cuenta</Link></li>
+                <li><Link to="/mis-pedidos" className={enlacePie}>Mis pedidos</Link></li>
+              </>
+            )}
+            {esEmpleado && <li><Link to="/admin" className={enlacePie}>Panel de administración</Link></li>}
+            {!usuario && (
+              <>
+                <li><Link to="/login" className={enlacePie}>Iniciar sesión</Link></li>
+                <li><Link to="/registro" className={enlacePie}>Registrarse</Link></li>
+              </>
+            )}
+          </ColumnaPie>
+          <ColumnaPie titulo="Compra segura">
+            <li>Pago con tarjeta mediante Stripe</li>
+            <li>Seguimiento de tus pedidos</li>
+            <li>Comprobante de compra en PDF</li>
+          </ColumnaPie>
+        </div>
+        <div className="border-t border-white/10 py-4 text-center text-sm">
+          © {ANIO} EngineSport. Todos los derechos reservados.
+        </div>
       </footer>
     </div>
   )
