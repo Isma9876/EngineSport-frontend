@@ -9,6 +9,7 @@ import ProductoDetalle from './pages/catalogo/ProductoDetalle.jsx'
 import Carrito from './pages/ventas/Carrito.jsx'
 import Checkout from './pages/ventas/Checkout.jsx'
 import MisPedidos from './pages/ventas/MisPedidos.jsx'
+import MiCuenta from './pages/cuenta/MiCuenta.jsx'
 import Admin from './pages/admin/Admin.jsx'
 import AdminLayout from './pages/admin/AdminLayout.jsx'
 import Confirmacion from './pages/ventas/Confirmacion.jsx'
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/carrito" element={<Carrito />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/mis-pedidos" element={<MisPedidos />} />
+          <Route path="/mi-cuenta" element={<MiCuenta />} />
           <Route path="/confirmacion/:id" element={<Confirmacion />} />
         </Route>
 
