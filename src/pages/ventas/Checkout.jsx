@@ -141,6 +141,11 @@ export default function Checkout() {
               onChange={setElegida}
               deshabilitado={Boolean(pedidoId)}
             />
+            {!pedidoId && (
+              <Link to="/mi-cuenta" className="mt-3 inline-block text-sm underline">
+                Administrar direcciones
+              </Link>
+            )}
           </div>
 
           <div>
