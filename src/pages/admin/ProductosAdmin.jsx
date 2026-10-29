@@ -3,6 +3,7 @@ import api from '../../api.js'
 import useApi from '../../hooks/useApi.js'
 import Cargando from '../../components/Cargando.jsx'
 import { formatoPrecio } from '../../utils/formato.js'
+import VariantesPanel from './VariantesPanel.jsx'
 
 const LIMITE = 10
 const campo = 'w-full rounded-lg border border-borde bg-white px-3 py-2 text-sm'
@@ -80,6 +81,7 @@ export default function ProductosAdmin() {
   const [guardando, setGuardando] = useState(false)
   const [ocupado, setOcupado] = useState(null)
   const [mensaje, setMensaje] = useState(null)
+  const [panelVariantes, setPanelVariantes] = useState(null)
 
   const productos = Array.isArray(datos?.productos) ? datos.productos : []
   const totalPaginas = datos?.total_pages ?? 1
@@ -248,6 +250,17 @@ export default function ProductosAdmin() {
     }
   }
 
+  function alternarVariantes(p) {
+    if (panelVariantes?.id === p.id) return cerrarVariantes()
+    setPanelVariantes({ id: p.id, nombre: p.nombre })
+  }
+
+  // Al cerrar se recarga el listado para actualizar stock_total y total_variantes
+  function cerrarVariantes() {
+    setPanelVariantes(null)
+    recargar()
+  }
+
   async function alternar(p) {
     const activar = !p.activo
     if (!activar && !window.confirm(`¿Desactivar el producto ${p.nombre}? Dejará de verse en la tienda.`)) return
@@ -272,6 +285,7 @@ export default function ProductosAdmin() {
       await api.delete(`/api/productos/${p.id}`)
       setMensaje({ ok: true, texto: `Producto ${p.nombre} eliminado.` })
       if (editando === p.id) cerrar()
+      if (panelVariantes?.id === p.id) setPanelVariantes(null)
       if (productos.length === 1 && pagina > 1) setPagina(pagina - 1)
       recargar()
     } catch (err) {
@@ -412,6 +426,10 @@ export default function ProductosAdmin() {
         </form>
       )}
 
+      {panelVariantes && (
+        <VariantesPanel key={panelVariantes.id} producto={panelVariantes} onCambio={recargar} onCerrar={cerrarVariantes} />
+      )}
+
       <section className="space-y-5 rounded-xl border border-borde bg-white p-6 shadow-sm sm:p-8">
         <form onSubmit={buscar} className="flex flex-wrap items-end gap-3">
           <div className="min-w-48 flex-1">
@@ -518,6 +536,9 @@ export default function ProductosAdmin() {
                         <div className="flex flex-wrap gap-2">
                           <button onClick={() => abrirEdicion(p)} disabled={ocupado === p.id} className={boton}>
                             Editar
+                          </button>
+                          <button onClick={() => alternarVariantes(p)} className={boton}>
+                            {panelVariantes?.id === p.id ? 'Cerrar variantes' : 'Variantes'}
                           </button>
                           <button onClick={() => alternar(p)} disabled={ocupado === p.id} className={boton}>
                             {p.activo ? 'Desactivar' : 'Activar'}
