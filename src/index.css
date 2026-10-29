@@ -25,3 +25,76 @@
 body {
   @apply bg-fondo text-texto font-sans;
 }
+
+/* ───────────────────────────────────────────────────────────────
+ * Movimiento (basado en transitions.dev: tokens + reveal + accordion)
+ * ─────────────────────────────────────────────────────────────── */
+:root {
+  --duration-stagger: 40ms;
+  --duration-fast: 250ms;
+  --duration-very-slow: 500ms;
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --distance-medium: 12px;
+  --blur-medium: 3px;
+}
+
+/* Revelado escalonado del texto del hero (18-texts-reveal) */
+.t-stagger-line {
+  display: block;
+  opacity: 0;
+  transform: translateY(var(--distance-medium));
+  filter: blur(var(--blur-medium));
+  transition:
+    opacity var(--duration-very-slow) var(--ease-smooth-out),
+    transform var(--duration-very-slow) var(--ease-smooth-out),
+    filter var(--duration-very-slow) var(--ease-smooth-out);
+}
+.t-stagger-line--2 { transition-delay: var(--duration-stagger); }
+.t-stagger-line--3 { transition-delay: calc(var(--duration-stagger) * 2); }
+.t-stagger.is-shown .t-stagger-line { opacity: 1; transform: none; filter: none; }
+
+/* Entrada de tarjetas: misma curva y desplazamiento, con retardo por índice */
+@keyframes t-rise {
+  from { opacity: 0; transform: translateY(var(--distance-medium)); filter: blur(var(--blur-medium)); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.t-rise {
+  animation: t-rise var(--duration-very-slow) var(--ease-smooth-out) both;
+  animation-delay: calc(var(--i, 0) * var(--duration-stagger));
+}
+
+/* Tarjeta: se eleva y la imagen se acerca */
+.t-card {
+  transition: transform var(--duration-fast) var(--ease-smooth-out), box-shadow var(--duration-fast) var(--ease-smooth-out), border-color var(--duration-fast) var(--ease-smooth-out);
+}
+.t-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px -14px rgb(0 0 0 / 0.35); }
+.t-card-img { transition: transform var(--duration-very-slow) var(--ease-smooth-out); }
+.t-card:hover .t-card-img { transform: scale(1.05); }
+
+/* Insignia del carrito: aparece con rebote cada vez que cambia el número (03) */
+@keyframes t-badge-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+.t-badge-pop { animation: t-badge-pop var(--duration-very-slow) var(--ease-bounce) both; }
+
+/* Acordeón de filtros (21-accordion); en pantallas grandes queda siempre abierto */
+.t-acc-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--duration-fast) var(--ease-smooth-out); }
+.t-acc[data-open="true"] .t-acc-panel { grid-template-rows: 1fr; }
+.t-acc-panel-inner { overflow: hidden; opacity: 0; filter: blur(2px); transition: opacity var(--duration-fast) var(--ease-smooth-out), filter var(--duration-fast) var(--ease-smooth-out); }
+.t-acc[data-open="true"] .t-acc-panel-inner { opacity: 1; filter: none; }
+.t-acc-chevron { display: inline-flex; transition: transform var(--duration-fast) var(--ease-smooth-out); }
+.t-acc-chevron path { vector-effect: non-scaling-stroke; }
+.t-acc[data-open="true"] .t-acc-chevron { transform: scaleY(-1); }
+@media (min-width: 1024px) {
+  .t-acc-lg .t-acc-panel { grid-template-rows: 1fr; }
+  .t-acc-lg .t-acc-panel-inner { opacity: 1; filter: none; overflow: visible; }
+  .t-acc-lg .t-acc-chevron { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-stagger-line, .t-card, .t-card-img, .t-acc-panel, .t-acc-panel-inner, .t-acc-chevron { transition: none !important; }
+  .t-rise, .t-badge-pop { animation: none !important; }
+  .t-card:hover, .t-card:hover .t-card-img { transform: none; }
+}
