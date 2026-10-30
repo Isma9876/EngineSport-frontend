@@ -10,10 +10,13 @@ import { formatoPrecio } from '../../utils/formato.js'
 const RETARDO_BUSQUEDA = 400
 // Filtros que viven en la URL (además de `page`).
 const FILTROS = [
-  'q', 'categoria', 'marca', 'precio_min', 'precio_max', 'talla', 'color', 'disponible', 'orden',
+  'q', 'categoria', 'genero', 'marca', 'precio_min', 'precio_max', 'talla', 'color', 'disponible', 'orden',
 ]
 // Los que se editan en el panel de filtros (en móvil, con "Aplicar").
-const FILTROS_PANEL = ['categoria', 'marca', 'talla', 'color', 'precio_min', 'precio_max', 'disponible']
+const FILTROS_PANEL = ['categoria', 'genero', 'marca', 'talla', 'color', 'precio_min', 'precio_max', 'disponible']
+// Géneros que acepta el backend; se usan si /api/productos/filtros no responde.
+const GENEROS_BASE = ['hombre', 'mujer', 'unisex']
+const nombreGenero = (g) => g.charAt(0).toUpperCase() + g.slice(1)
 const ORDENES = [
   ['nombre_asc', 'Nombre (A-Z)'],
   ['nombre_desc', 'Nombre (Z-A)'],
@@ -73,7 +76,7 @@ function CampoTexto({ valor, onCambio, ...props }) {
 // Lista desplegable de valores de /api/productos/filtros. El valor de la URL se
 // compara sin distinguir mayúsculas (igual que el backend) y, si no está en la
 // lista, se conserva como opción para no perderlo.
-function SelectFiltro({ valor, opciones, todas, onCambio }) {
+function SelectFiltro({ valor, opciones, todas, onCambio, etiqueta = (o) => o }) {
   const coincide = opciones.find((o) => o.toLowerCase() === valor.toLowerCase())
   return (
     <select className={campo} value={coincide ?? valor} onChange={(e) => onCambio(e.target.value)}>
@@ -81,7 +84,7 @@ function SelectFiltro({ valor, opciones, todas, onCambio }) {
       {valor && !coincide && <option value={valor}>{valor}</option>}
       {opciones.map((o) => (
         <option key={o} value={o}>
-          {o}
+          {etiqueta(o)}
         </option>
       ))}
     </select>
@@ -166,6 +169,7 @@ export default function Productos() {
   // Valores de /api/productos/filtros; si la llamada falla, marca/talla/color
   // vuelven a ser campos de texto y la barra de precio se oculta.
   const listaTexto = (v) => (Array.isArray(v) ? v.map(String).filter(Boolean) : [])
+  const generos = filtros.error ? GENEROS_BASE : listaTexto(filtros.datos?.generos)
   const marcas = listaTexto(filtros.datos?.marcas)
   const tallas = listaTexto(filtros.datos?.tallas)
   const colores = listaTexto(filtros.datos?.colores)
@@ -241,6 +245,7 @@ export default function Productos() {
       clave: 'categoria',
       texto: `Categoría: ${nombreCategoria(valores.categoria) ?? valores.categoria}`,
     },
+    valores.genero && { clave: 'genero', texto: `Género: ${nombreGenero(valores.genero)}` },
     valores.marca && { clave: 'marca', texto: `Marca: ${valores.marca}` },
     valores.talla && { clave: 'talla', texto: `Talla: ${valores.talla}` },
     valores.color && { clave: 'color', texto: `Color: ${valores.color}` },
@@ -262,6 +267,7 @@ export default function Productos() {
     valores.q && `que coincidan con "${valores.q}"`,
     valores.categoria &&
       `en la categoría ${nombreCategoria(valores.categoria) ? `"${nombreCategoria(valores.categoria)}"` : 'seleccionada'}`,
+    valores.genero && `para el género "${valores.genero}"`,
     valores.marca && `de la marca "${valores.marca}"`,
     valores.talla && `en talla "${valores.talla}"`,
     valores.color && `de color "${valores.color}"`,
@@ -345,6 +351,15 @@ export default function Productos() {
                     </option>
                   ))}
                 </select>
+              </Etiqueta>
+              <Etiqueta texto="Género">
+                <SelectFiltro
+                  valor={fuente.genero ?? ''}
+                  opciones={generos}
+                  todas="Todos"
+                  etiqueta={nombreGenero}
+                  onCambio={(v) => poner({ genero: v })}
+                />
               </Etiqueta>
               <Etiqueta texto="Marca">
                 {filtros.error ? (
