@@ -23,6 +23,15 @@ const ICONOS = [
 ]
 const ICONO_GENERICO = ['M3 12V4h8l10 10-8 8z', 'M7.5 8.5h.01']
 
+// Foto de cada categoría (en public/img), elegida por el nombre; sin foto se usa el icono.
+const FOTOS = [
+  { claves: ['calzado', 'tenis', 'zapat', 'bota'], src: '/img/cat-calzado.webp' },
+  { claves: ['ropa', 'camis', 'playera', 'short', 'pantal', 'chama'], src: '/img/cat-ropa.webp' },
+  { claves: ['accesor', 'guante', 'mochila', 'bolso'], src: '/img/cat-accesorios.webp' },
+  { claves: ['equip', 'fitness', 'gimnas', 'pesa', 'entren'], src: '/img/cat-equipamiento.webp' },
+  { claves: ['natac', 'piscina', 'nado'], src: '/img/cat-natacion.webp' },
+]
+
 function normalizar(texto) {
   return String(texto ?? '')
     .toLowerCase()
@@ -77,18 +86,41 @@ function Categorias() {
       {cargando && <Cargando texto="Cargando categorías..." />}
       {error && <ErrorReintento mensaje={error.message} onReintentar={recargar} />}
       {principales.length > 0 && (
-        <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {principales.map((c) => (
-            <li key={c.id}>
-              <Link
-                to={`/productos?categoria=${c.id}`}
-                className="t-card flex h-24 flex-col items-center justify-center gap-1.5 rounded-xl border border-borde bg-superficie p-2 text-center font-titulo text-lg font-bold uppercase leading-tight hover:border-primario hover:text-primario-oscuro focus-visible:outline-2 focus-visible:outline-primario"
-              >
-                <IconoCategoria nombre={c.nombre} />
-                {c.nombre}
-              </Link>
-            </li>
-          ))}
+        <ul className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-3">
+          {principales.map((c) => {
+            const n = normalizar(c.nombre)
+            const foto = FOTOS.find((f) => f.claves.some((k) => n.includes(k)))?.src
+            return (
+              <li key={c.id}>
+                {foto ? (
+                  <Link
+                    to={`/productos?categoria=${c.id}`}
+                    className="t-card group relative flex aspect-[4/5] items-end overflow-hidden rounded-xl bg-secundario focus-visible:outline-2 focus-visible:outline-primario"
+                  >
+                    <img
+                      src={foto}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover saturate-[0.85] transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <span className="absolute inset-0 bg-linear-to-t from-secundario via-secundario/25 to-transparent" />
+                    <span className="relative p-3 font-titulo text-xl font-bold uppercase leading-tight text-white">
+                      {c.nombre}
+                    </span>
+                  </Link>
+                ) : (
+                  <Link
+                    to={`/productos?categoria=${c.id}`}
+                    className="t-card flex aspect-[4/5] flex-col items-center justify-center gap-1.5 rounded-xl border border-borde bg-superficie p-2 text-center font-titulo text-lg font-bold uppercase leading-tight hover:border-primario hover:text-primario-oscuro focus-visible:outline-2 focus-visible:outline-primario"
+                  >
+                    <IconoCategoria nombre={c.nombre} />
+                    {c.nombre}
+                  </Link>
+                )}
+              </li>
+            )
+          })}
         </ul>
       )}
     </section>
