@@ -31,6 +31,13 @@ const FOTOS = [
   { claves: ['natac', 'piscina', 'nado'], src: '/img/cat-natacion.webp' },
 ]
 
+// Entrada al catálogo por género: /productos lee el filtro `genero` de la URL.
+// Las fotos están en public/img; posicion es el encuadre (object-position) de cada una.
+const GENEROS = [
+  { clave: 'hombre', titulo: 'Hombre', foto: '/img/genero-hombre.webp', posicion: 'object-top' },
+  { clave: 'mujer', titulo: 'Mujer', foto: '/img/genero-mujer.webp', posicion: 'object-[70%_30%]' },
+]
+
 function normalizar(texto) {
   return String(texto ?? '')
     .toLowerCase()
@@ -68,6 +75,40 @@ function ErrorReintento({ mensaje, onReintentar }) {
         Reintentar
       </button>
     </p>
+  )
+}
+
+function PorGenero() {
+  return (
+    <section aria-label="Comprar por género">
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {GENEROS.map((g) => (
+          <li key={g.clave}>
+            <Link
+              to={`/productos?genero=${g.clave}`}
+              className="t-card group relative flex aspect-[16/9] items-end overflow-hidden rounded-xl bg-secundario focus-visible:outline-2 focus-visible:outline-primario sm:aspect-[2/1]"
+            >
+              <img
+                src={g.foto}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className={`absolute inset-0 h-full w-full object-cover saturate-[0.85] transition-transform duration-500 group-hover:scale-105 ${g.posicion}`}
+              />
+              <span className="absolute inset-0 bg-linear-to-t from-secundario via-secundario/30 to-transparent" />
+              <span className="relative p-5">
+                <span className="block font-titulo text-4xl font-extrabold uppercase leading-none text-white">
+                  {g.titulo}
+                </span>
+                <span className="mt-1 block font-semibold text-primario">
+                  Ver colección <span aria-hidden="true">→</span>
+                </span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }
 
@@ -195,17 +236,17 @@ export default function Home() {
           className="absolute inset-0 -z-20 h-full w-full object-cover object-[70%_80%] saturate-[0.8]"
         />
         <div className="absolute inset-0 -z-10 bg-linear-to-r from-secundario via-secundario/80 to-secundario/0 max-md:bg-secundario/70 max-md:bg-none" />
-        <div className={`t-stagger px-6 py-14 sm:px-10 sm:py-24 md:max-w-xl ${visible ? 'is-shown' : ''}`}>
-          <h1 className="t-stagger-line t-stagger-line--1 font-titulo text-4xl font-extrabold uppercase leading-tight text-white sm:text-6xl">
+        <div className={`t-stagger px-6 py-8 sm:px-10 sm:py-14 md:max-w-xl ${visible ? 'is-shown' : ''}`}>
+          <h1 className="t-stagger-line t-stagger-line--1 font-titulo text-3xl font-extrabold uppercase leading-tight text-white sm:text-5xl">
             Equípate para <span className="text-primario">rendir</span>
           </h1>
-          <p className="t-stagger-line t-stagger-line--2 mt-4 max-w-xl text-lg">
+          <p className="t-stagger-line t-stagger-line--2 mt-3 max-w-xl text-base sm:text-lg">
             Artículos deportivos para entrenar, competir y disfrutar. Encuentra lo que necesitas y págalo en línea.
           </p>
           <span className="t-stagger-line t-stagger-line--3">
             <Link
               to="/productos"
-              className="mt-6 inline-block rounded bg-primario px-6 py-3 font-semibold text-secundario hover:bg-primario-oscuro hover:text-white focus-visible:outline-2 focus-visible:outline-white"
+              className="mt-5 inline-block rounded bg-primario px-6 py-3 font-semibold text-secundario hover:bg-primario-oscuro hover:text-white focus-visible:outline-2 focus-visible:outline-white"
             >
               Ver productos
             </Link>
@@ -213,8 +254,9 @@ export default function Home() {
         </div>
       </section>
 
-      <Beneficios />
+      <PorGenero />
       <Categorias />
+      <Beneficios />
       <Disponibles />
 
       <section className="flex flex-col items-start justify-between gap-4 rounded-xl bg-superficie px-6 py-8 sm:flex-row sm:items-center sm:px-10">
