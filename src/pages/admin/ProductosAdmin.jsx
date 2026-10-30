@@ -4,6 +4,7 @@ import useApi from '../../hooks/useApi.js'
 import Cargando from '../../components/Cargando.jsx'
 import { formatoPrecio } from '../../utils/formato.js'
 import VariantesPanel from './VariantesPanel.jsx'
+import MenuAcciones from '../../components/MenuAcciones.jsx'
 
 const LIMITE = 10
 const campo = 'w-full rounded-lg border border-borde bg-white px-3 py-2 text-sm'
@@ -496,7 +497,7 @@ export default function ProductosAdmin() {
                   <th className="px-4 py-3 font-semibold">Venta y costo</th>
                   <th className="px-4 py-3 font-semibold">Disponibilidad y stock</th>
                   <th className="px-4 py-3 font-semibold">Estado</th>
-                  <th className="px-4 py-3 font-semibold">Acciones</th>
+                  <th className="w-px whitespace-nowrap px-4 py-3 text-right font-semibold">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -532,21 +533,22 @@ export default function ProductosAdmin() {
                           {p.activo ? 'Activo' : 'Inactivo'}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex flex-wrap gap-2">
-                          <button onClick={() => abrirEdicion(p)} disabled={ocupado === p.id} className={boton}>
-                            Editar
-                          </button>
-                          <button onClick={() => alternarVariantes(p)} className={boton}>
-                            {panelVariantes?.id === p.id ? 'Cerrar variantes' : 'Variantes'}
-                          </button>
-                          <button onClick={() => alternar(p)} disabled={ocupado === p.id} className={boton}>
-                            {p.activo ? 'Desactivar' : 'Activar'}
-                          </button>
-                          <button onClick={() => eliminar(p)} disabled={ocupado === p.id} className={boton}>
-                            Eliminar
-                          </button>
-                        </div>
+                      <td className="w-px whitespace-nowrap px-4 py-3 text-right">
+                        <MenuAcciones
+                          opciones={[
+                            { etiqueta: 'Editar', onClick: () => abrirEdicion(p), deshabilitada: ocupado === p.id },
+                            {
+                              etiqueta: panelVariantes?.id === p.id ? 'Cerrar variantes' : 'Variantes',
+                              onClick: () => alternarVariantes(p),
+                            },
+                            {
+                              etiqueta: p.activo ? 'Desactivar' : 'Activar',
+                              onClick: () => alternar(p),
+                              deshabilitada: ocupado === p.id,
+                            },
+                            { etiqueta: 'Eliminar', onClick: () => eliminar(p), deshabilitada: ocupado === p.id, peligrosa: true },
+                          ]}
+                        />
                       </td>
                     </tr>
                   )

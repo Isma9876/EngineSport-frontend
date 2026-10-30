@@ -2,6 +2,7 @@ import { useState } from 'react'
 import api from '../../api.js'
 import useApi from '../../hooks/useApi.js'
 import Cargando from '../../components/Cargando.jsx'
+import MenuAcciones from '../../components/MenuAcciones.jsx'
 
 const campo = 'w-full rounded-lg border border-borde bg-white px-3 py-2 text-sm'
 const boton = 'rounded-lg border border-borde px-3 py-1 text-sm font-semibold hover:bg-superficie disabled:opacity-40'
@@ -202,7 +203,7 @@ export default function CategoriasAdmin() {
                   <th className="px-4 py-3 font-semibold">Nombre</th>
                   <th className="px-4 py-3 font-semibold">Descripción</th>
                   <th className="px-4 py-3 font-semibold">Padre</th>
-                  <th className="px-4 py-3 font-semibold">Acciones</th>
+                  <th className="w-px whitespace-nowrap px-4 py-3 text-right font-semibold">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -213,15 +214,13 @@ export default function CategoriasAdmin() {
                     <td className="px-4 py-3">
                       {c.categoriaPadre?.nombre ?? nombrePorId.get(c.id_categoria_padre) ?? '-'}
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2">
-                        <button onClick={() => abrirEdicion(c)} disabled={ocupado === c.id} className={boton}>
-                          Editar
-                        </button>
-                        <button onClick={() => eliminar(c)} disabled={ocupado === c.id} className={boton}>
-                          Eliminar
-                        </button>
-                      </div>
+                    <td className="w-px whitespace-nowrap px-4 py-3 text-right">
+                      <MenuAcciones
+                        opciones={[
+                          { etiqueta: 'Editar', onClick: () => abrirEdicion(c), deshabilitada: ocupado === c.id },
+                          { etiqueta: 'Eliminar', onClick: () => eliminar(c), deshabilitada: ocupado === c.id, peligrosa: true },
+                        ]}
+                      />
                     </td>
                   </tr>
                 ))}
