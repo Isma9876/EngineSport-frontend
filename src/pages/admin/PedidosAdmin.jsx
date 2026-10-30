@@ -3,6 +3,7 @@ import api from '../../api.js'
 import useApi from '../../hooks/useApi.js'
 import Cargando from '../../components/Cargando.jsx'
 import { formatoPrecio } from '../../utils/formato.js'
+import MenuAcciones from '../../components/MenuAcciones.jsx'
 
 const POR_PAGINA = 15
 const titulo = 'font-titulo text-2xl font-extrabold uppercase'
@@ -165,30 +166,41 @@ export default function PedidosAdmin() {
                       <td className="pr-3">#{p.id_cliente}</td>
                       <td className="pr-3 capitalize">{p.estado}</td>
                       <td className="pr-3">{formatoPrecio(p.total)}</td>
-                      <td className="space-x-2 whitespace-nowrap py-1">
-                        <button onClick={() => verDetalle(id)} className={boton}>
-                          {abierto === id ? 'Ocultar' : 'Ver'}
-                        </button>
-                        {p.estado === 'pagado' && (
-                          <>
-                            <button
-                              onClick={() => setEnvio({ id, transportista: '', guia: '' })}
-                              disabled={trabajando}
-                              className={boton}
-                            >
-                              Enviar
-                            </button>
-                            <button onClick={() => reembolsar(id)} disabled={trabajando} className={boton}>
-                              Reembolsar
-                            </button>
-                          </>
-                        )}
-                        {p.estado === 'pendiente' && (
-                          <button onClick={() => cancelar(id)} disabled={trabajando} className={boton}>
-                            Cancelar
-                          </button>
-                        )}
-                      </td>
+                      <td className="py-1">
+                      <MenuAcciones
+                        opciones={[
+                          {
+                            etiqueta: abierto === id ? 'Ocultar detalle' : 'Ver detalle',
+                            onClick: () => verDetalle(id),
+                          },
+                          ...(p.estado === 'pagado'
+                            ? [
+                                {
+                                  etiqueta: 'Marcar como enviado',
+                                  deshabilitada: trabajando,
+                                  onClick: () => setEnvio({ id, transportista: '', guia: '' }),
+                                },
+                                {
+                                  etiqueta: 'Reembolsar',
+                                  peligrosa: true,
+                                  deshabilitada: trabajando,
+                                  onClick: () => reembolsar(id),
+                                },
+                              ]
+                            : []),
+                          ...(p.estado === 'pendiente'
+                            ? [
+                                {
+                                  etiqueta: 'Cancelar pedido',
+                                  peligrosa: true,
+                                  deshabilitada: trabajando,
+                                  onClick: () => cancelar(id),
+                                },
+                              ]
+                            : []),
+                        ]}
+                      />
+                    </td>
                     </tr>
 
                     {envio?.id === id && (

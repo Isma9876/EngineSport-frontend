@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import api from '../../api.js'
 import useApi from '../../hooks/useApi.js'
 import Cargando from '../../components/Cargando.jsx'
+import MenuAcciones from '../../components/MenuAcciones.jsx'
 import { formatoPrecio } from '../../utils/formato.js'
 
 const campo = 'w-full rounded-lg border border-borde bg-white px-3 py-2 text-sm'
@@ -37,90 +38,6 @@ function Etiqueta({ texto, ayuda, children }) {
       {children}
       {ayuda && <span className="mt-1 block text-xs text-texto-suave">{ayuda}</span>}
     </label>
-  )
-}
-
-function MenuAcciones({ cupon, ocupado, onEditar, onAlternar }) {
-  const [pos, setPos] = useState(null) // null = cerrado
-  const botonRef = useRef(null)
-  const menuRef = useRef(null)
-
-  useEffect(() => {
-    if (!pos) return
-    const cerrar = () => setPos(null)
-    const fuera = (e) => {
-      if (!menuRef.current?.contains(e.target) && !botonRef.current?.contains(e.target)) cerrar()
-    }
-    const tecla = (e) => {
-      if (e.key === 'Escape') {
-        cerrar()
-        botonRef.current?.focus()
-      }
-    }
-    document.addEventListener('mousedown', fuera)
-    document.addEventListener('keydown', tecla)
-    window.addEventListener('scroll', cerrar, true)
-    window.addEventListener('resize', cerrar)
-    return () => {
-      document.removeEventListener('mousedown', fuera)
-      document.removeEventListener('keydown', tecla)
-      window.removeEventListener('scroll', cerrar, true)
-      window.removeEventListener('resize', cerrar)
-    }
-  }, [pos])
-
-  function alternarMenu() {
-    if (pos) return setPos(null)
-    const r = botonRef.current.getBoundingClientRect()
-    const derecha = window.innerWidth - r.right
-    // Si no cabe abajo, se abre hacia arriba
-    if (r.bottom + 110 > window.innerHeight) setPos({ right: derecha, bottom: window.innerHeight - r.top + 4 })
-    else setPos({ right: derecha, top: r.bottom + 4 })
-  }
-
-  const item = 'block w-full px-4 py-2 text-left text-sm hover:bg-superficie'
-
-  return (
-    <>
-      <button
-        ref={botonRef}
-        onClick={alternarMenu}
-        disabled={ocupado}
-        aria-haspopup="menu"
-        aria-expanded={Boolean(pos)}
-        className={`${boton} whitespace-nowrap`}      >
-        {ocupado ? 'Procesando...' : 'Acciones ▾'}
-      </button>
-      {pos && (
-        <div
-          ref={menuRef}
-          role="menu"
-          style={{ position: 'fixed', ...pos }}
-          className="z-50 w-40 rounded-lg border border-borde bg-white py-1 shadow-lg"
-        >
-          <button
-            role="menuitem"
-            className={item}
-            onClick={() => {
-              setPos(null)
-              onEditar()
-            }}
-          >
-            Editar
-          </button>
-          <button
-            role="menuitem"
-            className={`${item} ${cupon.activo ? 'text-primario-oscuro' : ''}`}
-            onClick={() => {
-              setPos(null)
-              onAlternar()
-            }}
-          >
-            {cupon.activo ? 'Desactivar' : 'Activar'}
-          </button>
-        </div>
-      )}
-    </>
   )
 }
 
@@ -401,14 +318,18 @@ export default function CuponesAdmin() {
                           <td className="px-4 py-3">
                             <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${est.clase}`}>{est.texto}</span>
                           </td>
-                          <td className="px-4 py-3">
-                          <MenuAcciones
-                            cupon={c}
-                            ocupado={ocupado === c.id_cupon}
-                            onEditar={() => editar(c)}
-                            onAlternar={() => alternar(c)}
-                          />
-                        </td>
+                                                    <td className="px-4 py-3">
+                            <MenuAcciones
+                              opciones={[
+                                { etiqueta: 'Editar', deshabilitada: ocupado === c.id_cupon, onClick: () => editar(c) },
+                                {
+                                  etiqueta: c.activo ? 'Desactivar' : 'Activar',
+                                  deshabilitada: ocupado === c.id_cupon,
+                                  onClick: () => alternar(c),
+                                },
+                              ]}
+                            />
+                          </td>
                         </tr>
                       )
                     })}
