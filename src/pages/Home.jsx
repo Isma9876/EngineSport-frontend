@@ -52,28 +52,6 @@ function IconoCategoria({ nombre }) {
   )
 }
 
-// Ilustración decorativa del hero (sin imágenes externas).
-function IlustracionHero() {
-  return (
-    <svg viewBox="0 0 320 320" className="h-full w-full max-w-sm" aria-hidden="true">
-      <circle cx="170" cy="150" r="118" fill="#3ddc97" />
-      <g fill="none" stroke="#0f3d2e" strokeWidth="6" strokeLinecap="round">
-        <circle cx="170" cy="150" r="118" />
-        <path d="M52 150h236" />
-        <path d="M170 32c-52 46-52 190 0 236" />
-        <path d="M170 32c52 46 52 190 0 236" />
-        <path d="M88 66c40 28 40 156 0 184" />
-        <path d="M252 66c-40 28-40 156 0 184" />
-      </g>
-      <g stroke="#d6e4dc" strokeWidth="5" strokeLinecap="round" opacity="0.7">
-        <path d="M10 262h120" />
-        <path d="M40 286h150" />
-        <path d="M20 238h70" />
-      </g>
-    </svg>
-  )
-}
-
 function ErrorReintento({ mensaje, onReintentar }) {
   return (
     <p role="alert" className="mt-3 text-sm text-estado-error">
@@ -177,8 +155,16 @@ export default function Home() {
 
   return (
     <div className="space-y-10">
-      <section className="grid items-center gap-6 rounded-xl bg-secundario px-6 py-10 text-texto-claro sm:px-10 sm:py-12 md:grid-cols-2">
-        <div className={`t-stagger ${visible ? 'is-shown' : ''}`}>
+      <section className="relative isolate overflow-hidden rounded-xl bg-secundario text-texto-claro">
+        {/* Foto de fondo + degradado de la marca para que el texto siempre se lea */}
+        <img
+          src="/img/hero.webp"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-[70%_80%] saturate-[0.8]"
+        />
+        <div className="absolute inset-0 -z-10 bg-linear-to-r from-secundario via-secundario/80 to-secundario/0 max-md:bg-secundario/70 max-md:bg-none" />
+        <div className={`t-stagger px-6 py-14 sm:px-10 sm:py-24 md:max-w-xl ${visible ? 'is-shown' : ''}`}>
           <h1 className="t-stagger-line t-stagger-line--1 font-titulo text-4xl font-extrabold uppercase leading-tight text-white sm:text-6xl">
             Equípate para <span className="text-primario">rendir</span>
           </h1>
@@ -193,9 +179,6 @@ export default function Home() {
               Ver productos
             </Link>
           </span>
-        </div>
-        <div className="hidden justify-center md:flex">
-          <IlustracionHero />
         </div>
       </section>
 
