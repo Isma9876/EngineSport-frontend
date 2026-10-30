@@ -25,7 +25,7 @@ export function itemsPedidos(pedidos) {
       etiqueta: 'Pedido',
       texto: `Pedido #${p.id_pedido} pagado, listo para enviar`,
       detalle: [`Cliente #${p.id_cliente}`, fechaHora(p.fecha_pedido), formatoPrecio(p.total)].filter(Boolean).join(' · '),
-      ruta: RUTAS.pedido,
+      ruta: `${RUTAS.pedido}?pedido=${encodeURIComponent(p.id_pedido)}`,
     }))
 }
 
@@ -41,7 +41,7 @@ export function itemsExistencias(datos) {
     etiqueta: agotada ? 'Agotado' : 'Pocas unidades',
     texto: agotada ? `${nombre(v)} está agotado` : `${nombre(v)}: quedan pocas unidades`,
     detalle: `SKU ${v.sku ?? '-'} · stock mínimo ${v.stock_minimo}`,
-    ruta: RUTAS.existencia,
+    ruta: v.sku ? `${RUTAS.existencia}&q=${encodeURIComponent(v.sku)}` : RUTAS.existencia,
   })
   const agotadas = variantes.filter((v) => Number(v.stock) <= 0)
   const pocas = variantes

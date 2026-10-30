@@ -275,8 +275,10 @@ function estadoDe(v) {
 }
 
 function Existencias() {
+  const [params] = useSearchParams()
   const [todo, setTodo] = useState(false)
-  const [texto, setTexto] = useState('')
+  // "q" de la URL (p. ej. desde Requiere atención) solo es el valor inicial del buscador
+  const [texto, setTexto] = useState(params.get('q') ?? '')
   const [estado, setEstado] = useState('todos')
   const { datos, error, cargando, recargar } = useApi('/api/reportes/estado-existencias')
 
