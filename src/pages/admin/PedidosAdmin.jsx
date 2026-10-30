@@ -1,4 +1,5 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import api from '../../api.js'
 import useApi from '../../hooks/useApi.js'
 import Cargando from '../../components/Cargando.jsx'
@@ -29,6 +30,10 @@ export default function PedidosAdmin() {
   const [envio, setEnvio] = useState(null) // { id, transportista, guia }
   const [abierto, setAbierto] = useState(null)
   const [detalles, setDetalles] = useState({})
+  const [resaltado, setResaltado] = useState(null)
+  const [params, setParams] = useSearchParams()
+  const objetivo = params.get('pedido')
+  const [aplicado, setAplicado] = useState(null)
 
   const { datos, error, cargando, recargar } = useApi('/api/pedidos')
 
@@ -37,6 +42,52 @@ export default function PedidosAdmin() {
   const totalPaginas = Math.max(1, Math.ceil(filtrados.length / POR_PAGINA))
   const paginaActual = Math.min(pagina, totalPaginas)
   const visibles = filtrados.slice((paginaActual - 1) * POR_PAGINA, paginaActual * POR_PAGINA)
+
+  // Enlace desde el inicio (?pedido=ID): cuando el listado carga se pagina hasta el pedido, se expande
+  // su detalle y se resalta. Se ajusta el estado durante el render (una sola vez por cada pedido enlazado).
+  if (!objetivo && aplicado !== null) {
+    setAplicado(null)
+  } else if (objetivo && Array.isArray(datos) && aplicado !== objetivo) {
+    setAplicado(objetivo)
+    const indice = datos.findIndex((p) => String(p.id_pedido) === objetivo)
+    if (indice === -1) {
+      setMensaje({ ok: false, texto: `No se encontró el pedido #${objetivo}.` })
+    } else {
+      setEstado('')
+      setPagina(Math.floor(indice / POR_PAGINA) + 1)
+      setAbierto(datos[indice].id_pedido)
+      setResaltado(datos[indice].id_pedido)
+    }
+  }
+
+  // Trae el detalle del pedido enlazado y quita el parámetro de la URL para que recargar no lo repita
+  useEffect(() => {
+    if (!objetivo || aplicado !== objetivo) return
+    const p = datos.find((x) => String(x.id_pedido) === objetivo)
+    if (p) {
+      api
+        .get(`/api/pedidos/${p.id_pedido}`)
+        .then((det) => setDetalles((d) => ({ ...d, [p.id_pedido]: det })))
+        .catch((e) => setMensaje({ ok: false, texto: e.message }))
+    }
+    setParams(
+      (actual) => {
+        const nuevos = new URLSearchParams(actual)
+        nuevos.delete('pedido')
+        return nuevos
+      },
+      { replace: true },
+    )
+  }, [objetivo, aplicado, datos, setParams])
+
+  // Con la fila ya pintada: scroll suave hasta ella y quitar el resaltado a los pocos segundos
+  useEffect(() => {
+    if (resaltado == null) return undefined
+    const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    document.getElementById(`pedido-${resaltado}`)?.scrollIntoView({ behavior: reducido ? 'auto' : 'smooth', block: 'center' })
+    const t = setTimeout(() => setResaltado(null), 4000)
+    return () => clearTimeout(t)
+  }, [resaltado])
 
   async function ejecutar(id, accion, textoOk) {
     setOcupado(id)
@@ -160,7 +211,10 @@ export default function PedidosAdmin() {
                 const det = detalles[id]
                 return (
                   <Fragment key={id}>
-                    <tr className="border-b border-borde align-top">
+                    <tr
+                      id={`pedido-${id}`}
+                      className={`border-b border-borde align-top transition-colors duration-500 ${resaltado === id ? 'bg-primario/20' : ''}`}
+                    >
                       <td className="py-2 pr-3 font-semibold">#{id}</td>
                       <td className="pr-3">{fecha(p.fecha_pedido)}</td>
                       <td className="pr-3">#{p.id_cliente}</td>
