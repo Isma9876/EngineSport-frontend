@@ -9,7 +9,8 @@ import MenuAcciones from '../../components/MenuAcciones.jsx'
 const LIMITE = 10
 const campo = 'w-full rounded-lg border border-borde bg-white px-3 py-2 text-sm'
 const boton = 'rounded-lg border border-borde px-3 py-1 text-sm font-semibold hover:bg-superficie disabled:opacity-40'
-const VACIO = { nombre: '', descripcion: '', marca: '', categoria: '', proveedor: '', costo: '', venta: '' }
+const VACIO = { nombre: '', descripcion: '', marca: '', genero: 'unisex', categoria: '', proveedor: '', costo: '', venta: '' }
+const GENEROS = { hombre: 'Hombre', mujer: 'Mujer', unisex: 'Unisex' }
 const VARIANTE_VACIA = { sku: '', talla: '', color: '', imagen_url: '', stock: '0', stock_minimo: '0' }
 
 const ESTADOS = {
@@ -155,6 +156,7 @@ export default function ProductosAdmin() {
         nombre: d.nombre ?? '',
         descripcion: d.descripcion ?? '',
         marca: d.marca ?? '',
+        genero: d.genero ?? 'unisex',
         categoria: d.categoria?.id ? String(d.categoria.id) : '',
         proveedor: d.proveedor?.id ? String(d.proveedor.id) : '',
         costo: String(Number(d.precio_costo)),
@@ -218,6 +220,7 @@ export default function ProductosAdmin() {
       nombre,
       descripcion: f.descripcion.trim() || null,
       marca: limpiar(f.marca),
+      genero: f.genero,
       precio_costo: Number(f.costo),
       precio_venta: Number(f.venta),
       id_categoria: f.categoria ? Number(f.categoria) : null,
@@ -331,6 +334,15 @@ export default function ProductosAdmin() {
             </Etiqueta>
             <Etiqueta texto="Marca" ayuda="Opcional.">
               <input value={f.marca} onChange={cambiar('marca')} className={`${campo} mt-1`} maxLength={100} />
+            </Etiqueta>
+            <Etiqueta texto="Género">
+              <select value={f.genero} onChange={cambiar('genero')} className={`${campo} mt-1`}>
+                {Object.entries(GENEROS).map(([valor, texto]) => (
+                  <option key={valor} value={valor}>
+                    {texto}
+                  </option>
+                ))}
+              </select>
             </Etiqueta>
             <Etiqueta texto="Categoría" ayuda="Opcional.">
               <select value={f.categoria} onChange={cambiar('categoria')} className={`${campo} mt-1`}>
@@ -507,7 +519,11 @@ export default function ProductosAdmin() {
                     <tr key={p.id} className="border-b border-borde align-top last:border-0 hover:bg-superficie">
                       <td className="px-4 py-3">
                         <p className="font-semibold">{p.nombre}</p>
-                        {p.marca && <p className="text-xs text-texto-suave">{p.marca}</p>}
+                        {(p.marca || GENEROS[p.genero]) && (
+                          <p className="text-xs text-texto-suave">
+                            {[p.marca, GENEROS[p.genero]].filter(Boolean).join(' · ')}
+                          </p>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <p>{p.categoria?.nombre ?? '-'}</p>

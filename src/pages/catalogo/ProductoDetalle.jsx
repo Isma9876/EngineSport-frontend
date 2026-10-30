@@ -12,6 +12,8 @@ const boton = 'rounded border px-3 py-2 text-sm transition disabled:cursor-not-a
 const opcion = (activa) =>
   `${boton} ${activa ? 'border-primario bg-primario text-secundario' : 'border-borde bg-fondo hover:border-primario'}`
 
+const GENEROS = { hombre: 'Hombre', mujer: 'Mujer', unisex: 'Unisex' }
+
 function unicos(valores) {
   return [...new Set(valores.filter((v) => v != null))]
 }
@@ -150,9 +152,17 @@ export default function ProductoDetalle() {
         <div className="flex flex-col gap-4">
           <div>
             <h1 className="font-titulo text-2xl font-extrabold uppercase">{producto.nombre}</h1>
-            <p className="mt-1 text-sm text-texto-suave">
-              {[producto.marca, producto.categoria?.nombre].filter(Boolean).join(' · ')}
-            </p>
+            <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-texto-suave">
+              <p>{[producto.marca, producto.categoria?.nombre].filter(Boolean).join(' · ')}</p>
+              {GENEROS[producto.genero] && (
+                <Link
+                  to={`/productos?genero=${producto.genero}`}
+                  className="rounded-full border border-borde px-2.5 py-0.5 text-xs font-semibold hover:border-primario"
+                >
+                  {GENEROS[producto.genero]}
+                </Link>
+              )}
+            </div>
           </div>
           <p className="text-3xl font-bold">{formatoPrecio(producto.precio_venta)}</p>
           {producto.descripcion && <p className="text-texto-suave">{producto.descripcion}</p>}
