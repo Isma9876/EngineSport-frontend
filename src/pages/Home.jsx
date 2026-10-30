@@ -11,8 +11,7 @@ const MAX_CATEGORIAS = 6
 const BENEFICIOS = [
   { titulo: 'Pago seguro', texto: 'Con tarjeta, vía Stripe', trazo: 'M4 10h16M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM8 15h3' },
   { titulo: 'Sigue tu pedido', texto: 'Estado en tiempo real desde tu cuenta', trazo: 'M12 3v9l5 3M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z' },
-  { titulo: 'Comprobante en PDF', texto: 'Descárgalo cuando lo necesites', trazo: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6' },
-]
+  { titulo: 'Envío gratis', texto: 'En compras desde Q500', trazo: 'M3 6h11v11H3zM14 10h4l3 3v4h-7M9 17.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM19 17.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0z'}]
 
 // Icono de cada categoría según su nombre; si no se reconoce, una etiqueta genérica.
 const ICONOS = [
