@@ -149,7 +149,7 @@ export default function Layout() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="relative bg-secundario text-texto-claro">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <Link to="/" onClick={cerrar} aria-label="EngineSport, inicio">
             <img src="/logo-horizontal.png" alt="EngineSport" className="h-9 w-auto" />
           </Link>
@@ -269,11 +269,11 @@ export default function Layout() {
           </nav>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6">
         <Outlet />
       </main>
       <footer className="bg-secundario text-texto-claro">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <img src="/logo-horizontal.png" alt="EngineSport" className="h-9 w-auto" />
             <p className="mt-3 max-w-xs text-sm">
